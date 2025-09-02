@@ -9,15 +9,15 @@ Scripts etc. for deploying field observatory in openshift
 ## External processes (not the automated FO scripts)
 
 Mainly from Istem's scripts
-- Lonzee:  /data/field-observatory/ui-data/lonzee
+- Lonzee: `/data/field-observatory/ui-data/lonzee`
   - ec/flux/ monthly csv, meteo monthly csv
-- DE-Geb:  /data/field-observatory/ui-data/gebesee
+- DE-Geb: `/data/field-observatory/ui-data/gebesee`
   - ec/flux/ monthly csv, meteo monthly csv
-- DE-RuS: /data/field-observatory/ui-data/selhausen
+- DE-RuS: `/data/field-observatory/ui-data/selhausen`
   - ec/flux/ monthly csv, meteo monthly csv
-- FR-Gri: /data/field-observatory/ui-data/grignon
+- FR-Gri: `/data/field-observatory/ui-data/grignon`
   - ec/flux/ monthly csv, meteo monthly csv
-- IT-BCi: /data/field-observatory/ui-data/cioffi
+- IT-BCi: `/data/field-observatory/ui-data/cioffi`
 - ECMWF weather forecast /data/field-observatory/ui-data/*/ecmwf_forecast/ecmwf_[15day|seasonal]_forecast.csv
   - \* qvidja, ik ja et. but not the sites mentioned above
 
