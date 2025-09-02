@@ -2,9 +2,9 @@
 Scripts etc. for deploying field observatory in openshift
 
 ## Openshift 
-project name: field-observatory
-owner: nevalaio
-uid: 1002860000
+- project name: field-observatory
+- owner: nevalaio
+- uid: 1002860000
 
 ## Might be useful notes...
 
