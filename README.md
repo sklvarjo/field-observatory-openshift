@@ -18,7 +18,7 @@ Mainly from Istem's scripts
 - FR-Gri: `/data/field-observatory/ui-data/grignon`
   - ec/flux/ monthly csv, meteo monthly csv
 - IT-BCi: `/data/field-observatory/ui-data/cioffi`
-- ECMWF weather forecast /data/field-observatory/ui-data/*/ecmwf_forecast/ecmwf_[15day|seasonal]_forecast.csv
+- ECMWF weather forecast\ `/data/field-observatory/ui-data/*/ecmwf_forecast/ecmwf_[15day|seasonal]_forecast.csv`
   - \* qvidja, ik ja et. but not the sites mentioned above
 
 ## Might be useful notes...
