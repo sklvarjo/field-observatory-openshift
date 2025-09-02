@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: dummy
+  name: dummy
+spec:
+  selector:
+    matchLabels:
+      app: dummy
+  template:
+    metadata:
+      labels:
+        app: dummy
+    spec:
+      volumes:
+        - name: fo-data
+          persistentVolumeClaim:
+            claimName: fo-data
+        - name: nfs-mount
+          nfs:
+            path: /cephfs/fmipecan/openshift
+            server: 193.166.192.225
+            readOnly: false
+      containers:
+      - image: busybox:latest
+        name: dummy
+        imagePullPolicy: Always
+        command: [ "/bin/ash", "-c", "--" ]
+        args: [ "while true; do sleep 30; done;" ]
+        ports:
+          - containerPort: 8000
+            protocol: TCP
+        volumeMounts:
+          - name: fo-data
+            mountPath: /data
+          - name: nfs-mount
+            mountPath: /datanfs
+      restartPolicy: Always
+      securityContext:
+        runAsGroup: 5107

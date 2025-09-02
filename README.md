@@ -21,6 +21,14 @@ Mainly from Istem's scripts
 - ECMWF weather forecast `/data/field-observatory/ui-data/*/ecmwf_forecast/ecmwf_[15day|seasonal]_forecast.csv`
   - \* qvidja, ik ja et. but not the sites mentioned above
 
+## Dummy container
+
+Useful for checking out the nfs mount...
+
+```
+oc apply -f dummy-container-with-nfs-mount/dummy-busybox-with-nfs-mount.yaml
+```
+
 ## Might be useful notes...
 
 How to run an interacive temporary pod (bash).
