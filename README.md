@@ -29,6 +29,8 @@ Useful for checking out the nfs mount...
 oc apply -f dummy-container-with-nfs-mount/dummy-busybox-with-nfs-mount.yaml
 ```
 
+This is also used as the rsync point for the BARData from hatakkaj.fmi.fi
+
 ## Quay.io
 
 List of all the available containers for [org FMI](https://quay.io/organization/fmi)

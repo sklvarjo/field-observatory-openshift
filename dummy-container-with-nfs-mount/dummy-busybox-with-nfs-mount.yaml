@@ -21,7 +21,7 @@ spec:
             server: 193.166.192.225
             readOnly: false
       containers:
-      - image: busybox:latest
+      - image: alpine:latest
         name: dummy
         imagePullPolicy: Always
         command: [ "/bin/ash", "-c", "--" ]
