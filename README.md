@@ -21,7 +21,8 @@ Mainly from Istem's scripts
 - ECMWF weather forecast `/data/field-observatory/ui-data/*/ecmwf_forecast/ecmwf_[15day|seasonal]_forecast.csv`
   - \* qvidja, ik ja et. but not the sites mentioned above
 
-NOTE: [Instructions](https://github.com/ICOS-Carbon-Portal/data?tab=readme-ov-file#downloading-originals-programmatically) for the automated download from ICOS 
+NOTE: [Instructions](https://github.com/ICOS-Carbon-Portal/data?tab=readme-ov-file#downloading-originals-programmatically) for the automated download from ICOS.
+NOTE: [instructions](https://github.com/ICOS-Carbon-Portal/meta/?tab=readme-ov-file#authentication) for automated token retrieval.
 
 ## Dummy container
 
