@@ -2,6 +2,27 @@ rm(list=ls(all=TRUE))
 
 source("local_utils.R")
 
+#json_data <- jsonlite::fromJSON("/data/sites.geojson", simplifyVector = FALSE)
+#
+## The features are stored as a list/data frame inside
+#features <- json_data$features
+#
+## Loop through features
+#for (i in features) {
+#  props <- i$properties
+#    for (s in props$data_sources) {
+#    if (s$source_type == "icos") {
+#      cat("  ID:", props$id, "\n")
+#      cat("  source type:", s$source_type, "\n")
+#      cat("    file:", s$source_config_file, "\n")
+#      icos <- jsonlite::fromJSON(s$source_config_file)
+#      cat("     - Site:", icos$icos_site_id, "\n")
+#      cat("     - DL path:", icos$download_path, "\n")
+#      cat("     - UI path:", icos$ui_path, "\n\n")
+#    }
+#  }
+#}
+
 sites <- c("BE-Lon", "DE-Geb", "DE-RuS", "FR-Gri", "IT-BCi")
 uinames <- c("lonzee", "gebesee", "selhausen", "grignon", "cioffi")
 
