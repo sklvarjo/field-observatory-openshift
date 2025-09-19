@@ -19,7 +19,7 @@ This may ask about a passphrase in a GUI. It is for a key that you do not rememb
 You can find it by "gpg --list-secret-keys". 
 It is the local keyring's master key and the passhrase is your local machines local password.
 
-    $ docker tag hatakkaj-receiver default-route-openshift-image-registry.apps.ock.fmi.fi/field-obeservatory/hatakkaj-receiver
+    $ docker tag hatakkaj-receiver default-route-openshift-image-registry.apps.ock.fmi.fi/field-observatory/hatakkaj-receiver
 
 **NOTE:** Every time you build a new image remember to tag the image again as the tag will still point to the old IMAGE ID after the build.
 **NOTE:** Usually it is needed to delete the deployment from openshift and create it again to get the new image to get loaded as that also points to the last IMAGE ID.
