@@ -20,12 +20,26 @@ logging.basicConfig(handlers=[handler], format=FORMAT)
 allowed_source_type = "fmi_weather_station"
 
 def do_fmi_meteo_fetch(id, config_path):
+  """! Calls the download and process functionality
+  @param id FO id for the site
+  @param config_path Where the configuration is
+  """
   print(f"{id}, {config_path}")
 
 def convert_str_to_dt(str):
+  """! Convers the string to timezone aware datetime
+       example string: 
+  @param daily Do we only get daily aggregates
+
+  @return timezone aware datetime
+  """
   return datetime.fromisoformat(str.replace("Z", "+00:00"))
 
 def main():
+  """! Main reads the sites from configuration and checks if the correct
+       data source exists and then checks if there is still a need to fetch
+       the data. 
+  """
   with open("testdata/sites.geojson", 'r') as f:
     data = json.load(f)
     #print(json.dumps(data, indent=4))
