@@ -28,7 +28,7 @@ def do_fmi_meteo_fetch(id, config_path):
 
 def convert_str_to_dt(str):
   """! Convers the string to timezone aware datetime
-       example string: 
+       example string: "2023-12-31T00:00:00.000000Z"
   @param daily Do we only get daily aggregates
 
   @return timezone aware datetime
