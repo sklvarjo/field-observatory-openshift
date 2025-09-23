@@ -13,6 +13,6 @@ RUN --mount=type=secret,id=git_token \
     git clone https://oauth2:${GIT_TOKEN}@github.com/ollinevalainen/fieldobs_utils.git 
 
 # By default run the main script
-#CMD ["python3", "-m", fieldobs_satobs" "field-observatory.yml"]
+#CMD ["python3", "-m", fieldobs_utils.bucket", "update_metadata","field-observatory.yml", "--update_ui_geojsons"]
 # For debugging
 ENTRYPOINT ["tail", "-f", "/dev/null"]
