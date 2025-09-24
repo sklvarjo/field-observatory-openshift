@@ -14,9 +14,6 @@ spec:
         app: hatakkaj-receiver
     spec:
       volumes:
-        - name: fo-data
-          persistentVolumeClaim:
-            claimName: fo-data
         - name: nfs-mount
           nfs:
             path: /cephfs/fmipecan/openshift
@@ -32,10 +29,8 @@ spec:
           - containerPort: 8000
             protocol: TCP
         volumeMounts:
-          - name: fo-data
-            mountPath: /data
           - name: nfs-mount
-            mountPath: /datanfs
+            mountPath: /data
       restartPolicy: Always
       securityContext:
         runAsGroup: 5107
