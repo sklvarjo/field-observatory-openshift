@@ -4,6 +4,7 @@ Podman would also work and in some cases it is a wiser option.
 Docker allows you to create things that are not allowed in openshift but for this project it does not matter.
 
     $ docker build -t hatakkaj-receiver -f hatakkaj-receiver.Dockerfile . 
+To avoid download throttling and blocking, login to docker hub/docker desktop etc. 
 
 Get the registry info.
 
@@ -11,7 +12,6 @@ Get the registry info.
     default-route-openshift-image-registry.apps.ock.fmi.fi
 
 Well this is same for everyone, so really not necessary now but here for completeness sake.
-
 
     $ docker login -u $(oc whoami) -p $(oc whoami -t) default-route-openshift-image-registry.apps.ock.fmi.fi
 
