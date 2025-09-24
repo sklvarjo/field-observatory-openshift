@@ -1,4 +1,5 @@
-ROM alpine:latest
+# syntax=docker/dockerfile:1.4
+FROM alpine:latest
 
 # Install rsync
 RUN apk add --no-cache rsync
