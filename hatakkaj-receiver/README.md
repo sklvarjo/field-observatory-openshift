@@ -1,3 +1,5 @@
+**TODO:** Document the hatakkaj server side scripts and also the openshift SA and token related things.
+
 #### Local build and pushing the image to openshift integrated repository
 
 Podman would also work and in some cases it is a wiser option. 
