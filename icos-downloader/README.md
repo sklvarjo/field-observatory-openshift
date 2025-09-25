@@ -43,6 +43,9 @@ Upload the cronjob
 
     $ oc patch cronjob icos-downloader-cronjob -p '{"spec": {"schedule": "3 */1 * * *"}}'
 
+**NOTE:** suspending a cronjob
+    $ oc patch cronjob icos-downloader-cronjob -p '{"spec" : {"suspend" : true }}'
+
 ### When testing locally ...
 
 #### local test build
