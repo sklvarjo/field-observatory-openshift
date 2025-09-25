@@ -41,7 +41,7 @@ Upload the cronjob
 
 **NOTE:** If just changing runtime might be easier to run 
 
-    $ oc patch is icos-downloader -p '{"spec": {"schedule": "3 */1 * * *"}}'
+    $ oc patch cronjob icos-downloader-cronjob -p '{"spec": {"schedule": "3 */1 * * *"}}'
 
 ### When testing locally ...
 
