@@ -23,7 +23,7 @@ spec:
             - name: icos-downloader
               image: image-registry.openshift-image-registry.svc:5000/field-observatory/icos-downloader:latest
               command: ["/bin/bash", "-c"]
-              args: ["Rscript download_and_process.R | tee -a /data/field-observatory/logs/icos-downloader-cronjob.log"]
+              args: ["Rscript download_and_process.R 2>&1 | tee -a /data/field-observatory/logs/icos-downloader-cronjob.log"]
               volumeMounts:
                 - name: fo-data
                   mountPath: /data
