@@ -21,8 +21,9 @@ spec:
                 readOnly: false
           containers:
             - name: icos-downloader
-              image: image-registry.openshift-image-registry.svc:5000/field-observatory/icos-downloader/icos-downloader:latest
-              command: ["Rscript", "download_and_process.R", ">>", "/data/field-observatory/logs/icos-downloader.log"]
+              image: image-registry.openshift-image-registry.svc:5000/field-observatory/icos-downloader:latest
+              command: ["/bin/bash", "-c"]
+              args: ["Rscript download_and_process.R >> /data/field-observatory/logs/icos-downloader-cronjob.log"]
               volumeMounts:
                 - name: fo-data
                   mountPath: /data
