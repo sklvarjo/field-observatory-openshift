@@ -12,6 +12,6 @@ RUN R -e "install.packages(c('httr', 'lubridate', 'units', 'udunits2'), repos='h
 COPY src_R/ .
 
 # By default run the main script
-#CMD ["Rscript", "download_and_process.R"]
+CMD ["Rscript", "download_and_process.R"]
 # For debugging
-ENTRYPOINT ["tail", "-f", "/dev/null"]
+#ENTRYPOINT ["tail", "-f", "/dev/null"]

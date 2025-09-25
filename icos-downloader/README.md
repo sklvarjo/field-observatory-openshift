@@ -26,18 +26,22 @@ It is the local keyring's master key and the passhrase is your local machines lo
 
     $ docker push default-route-openshift-image-registry.apps.ock.fmi.fi/field-observatory/icos-downloader
 
-**NOTE:** YOU HAVE TO CHANGE THE IMAGESTREAMS LOOKUP POLICY TO TRUE BY HAND IN CONSOLE.
+**NOTE:** YOU HAVE TO CHANGE THE IMAGESTREAMS LOOKUP POLICY TO TRUE BY HAND IN CONSOLE. **Only after first push**
 Administrator side -> builds -> ImageStreams -> hatakkaj-receiver -> YAML -> "spec: lookupPolicy: local: true" -> save
 or run this in oc
     $ oc patch is icos-downloader -p '{"spec": {"lookupPolicy": {"local": true}}}'
 
-### Install everything...
+### Deploy on Openshift
 
 Upload the cronjob
 
     $ oc apply -f icos-downloader-cronjob.yaml
 
 **NOTE:** Use "oc replace -f-" instead of "oc create -f-" when making changes. Easier than removing and creating again.
+
+**NOTE:** If just changing runtime might be easier to run 
+
+    $ oc patch is icos-downloader -p '{"spec": {"schedule": "3 */1 * * *"}}'
 
 ### When testing locally ...
 
