@@ -26,9 +26,14 @@ source("local_utils.R")
 sites <- c("BE-Lon", "DE-Geb", "DE-RuS", "FR-Gri", "IT-BCi")
 uinames <- c("lonzee", "gebesee", "selhausen", "grignon", "cioffi")
 
+print("===========")
+print(Sys.time())
+
 for(site_i in seq_along(sites)){
   sitename <- sites[site_i]
   uiname <- uinames[site_i]
+
+  print(sitename)
   
   outfolder <- paste0("/data/ICOS/", sitename, "/data")
   
@@ -153,6 +158,8 @@ for(site_i in seq_along(sites)){
                junkpaths = TRUE,
                exdir = outfolder)
 
+  print("Process")
+
   ############### Process for FO
   icossite_csv <- utils::read.csv(file.path(outfolder, zipped_csv_name))
   fo_var_map <- data.frame(fo_name=c("LongwaveDown", "LongwaveUp", "PAR", "ShortwaveDown", "ShortwaveUp", "TemperatureAir"),
@@ -226,5 +233,5 @@ for(site_i in seq_along(sites)){
       write.csv(all_dat, file=fo_file_name, row.names = FALSE, quote = FALSE)
     }
   }
-  
+  print("Done")
 } # end of loop over sites

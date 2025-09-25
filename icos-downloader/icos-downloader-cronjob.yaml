@@ -22,6 +22,7 @@ spec:
           containers:
             - name: icos-downloader
               image: icos-downloader:latest
+              command: ["Rscript", "download_and_process.R", ">>", "/data/field-observatory/logs/icos-downloader.log"]
               volumeMounts:
                 - name: fo-data
                   mountPath: /data
