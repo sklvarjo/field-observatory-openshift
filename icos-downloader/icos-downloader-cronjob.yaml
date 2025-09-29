@@ -6,7 +6,7 @@ metadata:
   name: icos-downloader-cronjob
   namespace: field-observatory
 spec:
-  schedule: '3 */1 * * *'
+  schedule: '0 1 * * *'
   successfulJobsHistoryLimit: 2
   failedJobsHistoryLimit: 1
   jobTemplate:
