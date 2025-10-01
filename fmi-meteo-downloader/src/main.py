@@ -99,7 +99,8 @@ def _loop_and_write(site_dir, fmisid, datetime_start, datetime_end, daily=False,
         else:
             logger.info(f"  - Would have written (dryrun: {dryrun}) {path}")
         datetime_iter = datetime_iter+relativedelta(months=1)
-        time.sleep(sleeptime)
+        if sleeptime < 0:
+            time.sleep(sleeptime)
 
 ###
 def init_data(site, fmisid, base, start, end, daily=False, dryrun=True, sleeptime=5, force=False):
@@ -279,7 +280,7 @@ def main(args):
   parser.add_argument("-b", "--basepath", help="Define base path, e.g., /data/field-observatory")
   parser.add_argument("-c", "--configpath", help="Define the main configuration path")
   parser.add_argument("-d", "--dryrun", action="store_true", help="Do not write anything")
-  parser.add_argument("-s", "--sleeptime", type=int, help="Define sleep time between smartmet queries in seconds defaults to 5 seconds")
+  parser.add_argument("-s", "--sleeptime", type=int, help="Define sleep time between smartmet queries in seconds defaults to 5 seconds, if 0 no sleep")
   parser.add_argument("-f", "--force", action="store_true", help="Force the initialization even if there are files in fmimeteo/observation folders")
 
   args = parser.parse_args(args)
