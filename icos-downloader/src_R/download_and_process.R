@@ -131,7 +131,10 @@ for(site_i in seq_along(sites)){
   
   nrtfluxes_dataset_id <- sub(".*/", "", nrtfluxes_dataset_url)
   nrtfluxes_download_url <- paste0('https://data.icos-cp.eu/licence_accept?ids=%5B%22', nrtfluxes_dataset_id, '%22%5D')
-  nrtfluxes_file <- httr::GET(url = nrtfluxes_download_url, httr::write_disk(nrtfluxes_zip_file_name,overwrite = TRUE), httr::progress())
+  #with progress printing 
+  #nrtfluxes_file <- httr::GET(url = nrtfluxes_download_url, httr::write_disk(nrtfluxes_zip_file_name,overwrite = TRUE), httr::progress())
+  #without progress printing
+  nrtfluxes_file <- httr::GET(url = nrtfluxes_download_url, httr::write_disk(nrtfluxes_zip_file_name,overwrite = TRUE))
 
   print("Extract")
   
