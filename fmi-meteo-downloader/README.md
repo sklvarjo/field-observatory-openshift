@@ -1,7 +1,60 @@
+## Local build and pushing the image to openshift integrated repository
+
+Podman would also work and in some cases it is a wiser option. 
+Docker allows you to create things that are not allowed in openshift but for this project it does not matter.
+
+    $ docker build -t fmi-meteo-downloader -f fmi-meteo-downloader.Dockerfile . 
+
+Get the registry info.
+
+    $ oc registry info --public
+    default-route-openshift-image-registry.apps.ock.fmi.fi
+
+Well this is same for everyone, so really not necessary now but here for completeness sake.
 
 
-**TODO:**
--
+    $ docker login -u $(oc whoami) -p $(oc whoami -t) default-route-openshift-image-registry.apps.ock.fmi.fi
+
+This may ask about a passphrase in a GUI. It is for a key that you do not remember doing. 
+You can find it by "gpg --list-secret-keys". 
+It is the local keyring's master key and the passhrase is your local machines local password.
+
+    $ docker tag fmi-meteo-downloader default-route-openshift-image-registry.apps.ock.fmi.fi/field-observatory/fmi-meteo-downloader
+
+**NOTE:** Changed the style of reference to the image, this might not be valid anymore. Every time you build a new image remember to tag the image again as the tag will still point to the old IMAGE ID after the build.
+**NOTE:** Usually it is needed to delete the deployment from openshift and create it again to get the new image to get loaded as that also points to the last IMAGE ID.
+
+    $ docker push default-route-openshift-image-registry.apps.ock.fmi.fi/field-observatory/fmi-meteo-downloader
+
+**NOTE:** Changed the style of reference to the image, this might not be valid anymore. YOU HAVE TO CHANGE THE IMAGESTREAMS LOOKUP POLICY TO TRUE BY HAND IN CONSOLE. **Only after first push**
+Administrator side -> builds -> ImageStreams -> hatakkaj-receiver -> YAML -> "spec: lookupPolicy: local: true" -> save
+or run this in oc
+    $ oc patch is fmi-meteo-downloader -p '{"spec": {"lookupPolicy": {"local": true}}}'
+
+### Deploy on Openshift
+
+Upload the cronjob
+
+    $ oc apply -f fmi-meteo-downloader-cronjob.yml
+
+**NOTE:** Use "oc replace -f-" instead of "oc create -f-" when making changes. Easier than removing and creating again.
+
+See below the running outside of a container section for the command line switches, these can be used in the cronjob yaml's 
+args section to change the behaviour of the script. 
+
+**NOTE:** If just changing runtime might be easier to run 
+
+    $ oc patch cronjob fmi-meteo-downloader-cronjob -p '{"spec": {"schedule": "1 */1 * * *"}}'
+
+**NOTE:** suspending a cronjob
+    $ oc patch cronjob fmi-meteo-downloader-cronjob -p '{"spec" : {"suspend" : true }}'
+
+## Other information
+
+### Init of conf files
+
+There is a file called src/init_configs.py that will create the site configuration files and modify the sites file to
+include the data source for fmimeteo. **!READ IT FIRST!** and use with caution.
 
 ### requirements
 
@@ -9,9 +62,11 @@
 
 ### Running outside of a container
 
-The path points by default to /data/field-observatory, but it can be changed to something else.
+The path points by default to /data/field-observatory and config path to 
+/data/field-observatory/field-observatory/field-observatory_sites.geojson, but it can be changed to something else.
 
-    $ python3 src/run.py -di -b /tmp -c /tmp/config.json
+    $ python3 src/main.py -di -b /tmp -c /tmp/config.json
+
 - d = Dryrun
 - i = Initialize data
 - b = Base path, e.g., /data/field-observatory

@@ -29,7 +29,8 @@ allowed_source_type = "fmi_weather_station"
 base_path = "/data/field-observatory/"
 main_configuration_file_path = "/data/field-observatory/field-observatory_sites.geojson"
 url = 'http://smartmet.fmi.fi/timeseries'
-init_start_time = "2025-08-01T00:00:00" #"2022-12-01T00:00:00"
+#now from the sites configuration
+#init_start_time = "2022-12-01T00:00:00"  #"2025-08-01T00:00:00" #"2022-12-01T00:00:00"
 #####################################################
 #####################################################
 
@@ -136,6 +137,8 @@ def update_data(site, fmisid, base, daily=False, dryrun=True, sleeptime=5):
     @param daily Is this run for daily aggregates, defaults to false.
     @param dryrun Skip the file writing operations also network operations
     @param sleeptime How long in seconds do we sleep between queries from smartmet
+
+    @return 0 if the observation for the site was empty, meaning do init for the site.
     """
     site_dir = _init_path(base, site, daily=daily)
     marker = ""
@@ -145,8 +148,8 @@ def update_data(site, fmisid, base, daily=False, dryrun=True, sleeptime=5):
     files = sorted(os.listdir(site_dir))
     count = len(files)
     if count == 0:
-        logger.error(f"  - {marker}folder had no files, odd... maybe init needs to be done".capitalize())
-        return
+        logger.error(f"  - {marker}folder had no files, ...".capitalize())
+        return count
     last_file = files[count-1]
     year = last_file.split("-")[0]
     month = last_file.split("-")[1].split(".")[0]
@@ -214,7 +217,7 @@ def _get_measurements(fmisid, start_t, end_t, daily=False):
     return asciicsv
 
 ###
-def do_fmi_meteo_fetch(path, id, config_path, initialize_data, dryrun, sleeptime, force):
+def do_fmi_meteo_fetch(path, id, config_path, initialize_data, dryrun, sleeptime, force, dstart_str):
   """! Calls the download and process functionality
   @param path Base path
   @param id FO id for the site
@@ -226,6 +229,8 @@ def do_fmi_meteo_fetch(path, id, config_path, initialize_data, dryrun, sleeptime
   """
   logger.info(f"Current site:: {id}")
   logger.info(f" - Reading config: {config_path}")
+  logger.info(f" - Took the start date for init if needed: {dstart_str}")
+
   if not os.path.isfile(config_path):
     logger.warning(f" ! Given configuration file does not EXIST")
   else:
@@ -237,14 +242,19 @@ def do_fmi_meteo_fetch(path, id, config_path, initialize_data, dryrun, sleeptime
     # Check if output dir is there and if not create it
     _create_dir(id, path, daily = data['daily'],dryrun = dryrun)
     # go fetch with initialize or update
+    init_end_time = datetime.now().strftime("%Y-%m-%dT%H:%M:%S") # "2022-12-01T00:00:00"
     if initialize_data:
-      init_end_time = datetime.now().strftime("%Y-%m-%dT%H:%M:%S") # "2022-12-01T00:00:00"
-      logger.info(f" - Initialize the data (from {init_start_time} to {init_end_time}) (Dryrun: {dryrun})")
+      logger.info(f" - Initialize the data (from {dstart_str} to {init_end_time}) (Dryrun: {dryrun})")
       if not dryrun:
-        init_data(site = id, fmisid = data['fmisid'], base = path, start = init_start_time, end = init_end_time, dryrun = dryrun, sleeptime = sleeptime, force = force)
+        init_data(site = id, fmisid = data['fmisid'], base = path, start = dstart_str, end = init_end_time, dryrun = dryrun, sleeptime = sleeptime, force = force)
     else:
       logger.info(f" - Update the data (Dry run: {dryrun})")
-      update_data(site = id, fmisid = data['fmisid'], base = path, dryrun = dryrun, sleeptime = sleeptime)
+      ret = update_data(site = id, fmisid = data['fmisid'], base = path, dryrun = dryrun, sleeptime = sleeptime)
+      if ret == 0:
+        logger.info(f" - Initialize the data (from {dstart_str} to {init_end_time}) (Dryrun: {dryrun})")
+        if not dryrun:
+          init_data(site = id, fmisid = data['fmisid'], base = path, start = dstart_str, end = init_end_time, dryrun = dryrun, sleeptime = sleeptime, force = force)
+
 
 ###
 def convert_str_to_dt(str):
@@ -265,9 +275,9 @@ def main(args):
 
   parser = argparse.ArgumentParser(description="This app is used to get the FMI meteo for FO: ",
                                    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-  parser.add_argument("-i", "--initialize", action="store_true", help=f"Do we initialize data from {init_start_time} to now")
-  parser.add_argument("-b", "--basepath", type=ascii, help="Define base path, e.g., /data/field-observatory")
-  parser.add_argument("-c", "--configpath", type=ascii, help="Define the main configuration path")
+  parser.add_argument("-i", "--initialize", action="store_true", help=f"Do we initialize data")
+  parser.add_argument("-b", "--basepath", help="Define base path, e.g., /data/field-observatory")
+  parser.add_argument("-c", "--configpath", help="Define the main configuration path")
   parser.add_argument("-d", "--dryrun", action="store_true", help="Do not write anything")
   parser.add_argument("-s", "--sleeptime", type=int, help="Define sleep time between smartmet queries in seconds defaults to 5 seconds")
   parser.add_argument("-f", "--force", action="store_true", help="Force the initialization even if there are files in fmimeteo/observation folders")
@@ -294,10 +304,13 @@ def main(args):
   logger.info(f"Using base path: {path}")
   logger.info(f"Using configuration file: {cpath}")
 
-  if not os.path.isfile(main_configuration_file_path):
+  logger.info(f"Running from: {os.path.dirname(os.path.realpath(__file__))}")
+  logger.info(f"Current working directory: {os.getcwd()}")
+
+  if not os.path.isfile(cpath):
     logger.error(f"The main configuration file is not there ({cpath})")
   else:
-    with open(main_configuration_file_path, 'r') as f:
+    with open(cpath, 'r') as f:
       data = json.load(f)
 
     features = data["features"]
@@ -307,15 +320,16 @@ def main(args):
       for ds in data_sources:
         #print(f"{properties['id']} and {ds['source_type']}")
         if ds['source_type'] in allowed_source_type:
+          dstart_str = properties['data_start'].split(".")[0]
           if properties['data_end'] == None:
             # Do, has not been marked as ended
-            do_fmi_meteo_fetch(path, properties['id'], ds['source_config_file'], initialize_data, dryrun, sleeptime, force)
+            do_fmi_meteo_fetch(path, properties['id'], ds['source_config_file'], initialize_data, dryrun, sleeptime, force, dstart_str)
           else:
             dend = convert_str_to_dt(properties['data_end'])
             now = datetime.now().replace(tzinfo=timezone(offset=timedelta()))
             if dend > now:
               # End time in future, doing
-              do_fmi_meteo_fetch(path, properties['id'], ds['source_config_file'], initialize_data, dryrun, sleeptime, force)
+              do_fmi_meteo_fetch(path, properties['id'], ds['source_config_file'], initialize_data, dryrun, sleeptime, force, dstart_str)
             else:
               # End time past, skip
               continue
