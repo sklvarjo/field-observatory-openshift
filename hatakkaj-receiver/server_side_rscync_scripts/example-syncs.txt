@@ -1,0 +1,10 @@
+rsync-exclude-list-hahkiala.txt /mnt/data/BARData/Hahkiala
+rsync-exclude-list-haltiala.txt /mnt/data/BARData/Haltiala
+rsync-exclude-list-kauhajoki.txt /mnt/data/BARData/Kauhajoki
+rsync-exclude-list-lapinlahti.txt /mnt/data/BARData/Lapinlahti
+rsync-exclude-list-lappila.txt /mnt/data/BARData/Lappila
+rsync-exclude-list-pernio.txt /mnt/data/BARData/Pernio
+rsync-exclude-list-qvidja.txt /mnt/data/BARData/Qvidja
+rsync-exclude-list-ruukki.txt /mnt/data/BARData/Ruukki
+rsync-exclude-list-sodankyla.txt /mnt/data/ICOS/FI-Sod
+rsync-exclude-list-virrat.txt /mnt/data/BARData/Virrat
