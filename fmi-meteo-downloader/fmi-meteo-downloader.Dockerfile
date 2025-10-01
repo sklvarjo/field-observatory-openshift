@@ -7,4 +7,4 @@ COPY src /project/src/
 
 WORKDIR /project
 
-CMD ["python3", "-u", "/project/src/run.py"]
+CMD ["python3", "-u", "/project/src/main.py"]
