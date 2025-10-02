@@ -1,3 +1,6 @@
+This clones the Viikki flux data from datacloud.helsinki.fi to the 
+**/data/hy-eddy2/data/** which is then used in Henriikka's gapfilling.
+ 
 ### Config map for rclone
 
 **NOTE:** The uh_datacloud is nextcloud but the new (~1.63 or later) version of rclone
