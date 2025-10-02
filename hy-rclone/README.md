@@ -73,7 +73,7 @@ Upload the cronjob
 
 **NOTE:** If just changing runtime might be easier to run 
 
-    $ oc patch cronjob hy-rclone-cronjob -p '{"spec": {"schedule": "3 1 * * *"}}'
+    $ oc patch cronjob hy-rclone-cronjob -p '{"spec": {"schedule": "1 3 * * *"}}'
 
 **NOTE:** suspending a cronjob
     $ oc patch cronjob hy-rclone-cronjob -p '{"spec" : {"suspend" : true }}'
