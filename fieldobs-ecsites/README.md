@@ -19,7 +19,7 @@ Copy paste the token into file secret_token.txt (same folder as this README.md) 
 
 ### Running the container locally
 
-    $ docker run --rm -u $(id -u):$(id -g) -v $(pwd)/src/testdata:/data fieldobs-ecsites
+    $ docker run --rm -u $(id -u):$(id -g) -v $(pwd)/testdata:/data fieldobs-ecsites
 
 ### Pushing to the openshift image registry
 Get the registry info.
@@ -61,3 +61,8 @@ Push the image to the Openshift's image registry
     $ oc patch cronjob fieldobs-ecsites-update-ec-data-to-ui-cronjob -p '{"spec" : {"suspend" : true }}'
     $ oc patch cronjob fieldobs-ecsites-update-smearflux-cronjob -p '{"spec" : {"suspend" : true }}'
 
+### Parallel memo
+
+When sequential
+
+993m core, 1600mi mem

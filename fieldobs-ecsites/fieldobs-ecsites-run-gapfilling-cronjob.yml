@@ -24,6 +24,13 @@ spec:
               image: image-registry.openshift-image-registry.svc:5000/field-observatory/fieldobs-ecsites:latest
               command: ["/bin/bash", "-c"]
               args: ["python -m fieldobs_ecsites.ecsites run_gapfilling /data/field-observatory/field-observatory.yml 2>&1 | tee -a /data/field-observatory/logs/fieldobs-ecsites-run-gapfilling-cronjob.log"]
+              resources:
+                limits:
+                  cpu: 1000m
+                  memory: 2000mi
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
               volumeMounts:
                 - name: fo-data
                   mountPath: /data
