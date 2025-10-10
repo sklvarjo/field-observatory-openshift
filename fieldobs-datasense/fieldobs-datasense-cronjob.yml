@@ -1,0 +1,30 @@
+---
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: fieldobs-datasense-cronjob
+  namespace: field-observatory
+spec:
+  schedule: '0 1 * * *'
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          volumes:
+            - name: fo-data
+              nfs:
+                path: /cephfs/fmipecan/openshift
+                server: 193.166.192.225
+                readOnly: false
+          containers:
+            - name: filedobs-datasense
+              image: image-registry.openshift-image-registry.svc:5000/field-observatory/fieldobs-datasense:latest
+              command: ["/bin/bash", "-c"]
+              args: ["python -m fieldobs_datasense update /data/field-observatory/field-observatory.yml 2>&1 | tee -a /data/field-observatory/logs/fieldobs-datasense-cronjob.log"]
+              volumeMounts:
+                - name: fo-data
+                  mountPath: /data
+          restartPolicy: Never
