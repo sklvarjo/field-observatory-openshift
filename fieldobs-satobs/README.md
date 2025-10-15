@@ -17,6 +17,8 @@ Copy paste the token into file secret_token.txt (same folder as this README.md) 
 
     export DOCKER_BUILDKIT=1;docker build --secret id=git_token,src=secret_token.txt -f fieldobs-satobs.Dockerfile -t fieldobs-satobs .
 
+**NOTE:** Sometimes you may need to add **--no-cache** to the above, for example, when changing the Git repo. 
+
 ### Running the container locally
 
     $ docker run --rm -u $(id -u):$(id -g) -v $(pwd)/testdata:/data fieldobs-satobs
