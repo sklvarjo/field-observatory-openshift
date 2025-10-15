@@ -6,7 +6,7 @@ metadata:
   name: fieldobs-datasense-cronjob
   namespace: field-observatory
 spec:
-  schedule: '0 1 * * *'
+  schedule: '1 */1 * * *'
   successfulJobsHistoryLimit: 2
   failedJobsHistoryLimit: 1
   jobTemplate:
@@ -23,7 +23,7 @@ spec:
             - name: filedobs-datasense
               image: image-registry.openshift-image-registry.svc:5000/field-observatory/fieldobs-datasense:latest
               command: ["/bin/bash", "-c"]
-              args: ["python -m fieldobs_datasense update /data/field-observatory/field-observatory.yml 2>&1 | tee -a /data/field-observatory/logs/fieldobs-datasense-cronjob.log"]
+              args: ["python -m fieldobs_datasense /data/field-observatory/field-observatory.yml 2>&1 | tee -a /data/field-observatory/logs/fieldobs-datasense-cronjob.log"]
               volumeMounts:
                 - name: fo-data
                   mountPath: /data
