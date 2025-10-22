@@ -1,2 +1,3 @@
+secret_token.txt
 # Any test data folder is ignored. 
 **/testdata/
