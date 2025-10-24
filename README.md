@@ -39,6 +39,14 @@ List of all the available containers for [org FMI](https://quay.io/organization/
 
 ## Might be useful notes...
 
+Add an alias to either ~/.bashrc or ~/.bash_aliases, depending on which you use.
+For example: 
+```
+alias ocdevlogin='oc login https://api.ock.fmi.fi:6443 -u $USER'
+```
+This will simplify the login to simply **ocdevlogin** ... 
+as then it will ask only the password and use the current terminals username.
+
 How to run an interacive temporary pod (bash).
 ```
 oc run pod-name-temporary -it --rm --image=bash --restart=Never
@@ -47,5 +55,4 @@ How to run an interactive temporary pod (python but start it in bash prompt)
 ```
 oc run pod-name-temporary -it --rm --image=python --restart=Never -- bash 
 ```
-
 
