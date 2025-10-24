@@ -39,6 +39,8 @@ List of all the available containers for [org FMI](https://quay.io/organization/
 
 ## Might be useful notes...
 
+### Alias for login
+
 Add an alias to either ~/.bashrc or ~/.bash_aliases, depending on which you use.
 For example: 
 ```
@@ -46,6 +48,26 @@ alias ocdevlogin='oc login https://api.ock.fmi.fi:6443 -u $USER'
 ```
 This will simplify the login to simply **ocdevlogin** ... 
 as then it will ask only the password and use the current terminals username.
+
+### Install HELM
+
+Download needed version from [HELM releases](https://github.com/helm/helm/releases).
+
+    $ tar xzf helm-v4.0.0-beta.1-linux-amd64.tar.gz
+
+Or what ever you downloaded. Then
+
+    $ cp linux-amd64/helm ~/.local/bin/
+
+or if all users on machine need to use it
+
+    $ cp linux-amd64/helm /usr/local/bin/
+
+So you can use it in your terminals. 
+
+Remove unnecessary files (helm-v4.0.0-beta.1-linux-amd64.tar.gz, linux-amd64/)
+
+### Temporary pods
 
 How to run an interacive temporary pod (bash).
 ```
