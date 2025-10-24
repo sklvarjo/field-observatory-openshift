@@ -44,7 +44,7 @@ Push the image to the Openshift's image registry
 
 #### Force reinit of all
 
-    $ apply -f fieldobs-radobs-init-job.yml
+    $ oc apply -f fieldobs-radobs-init-job.yml
 
 #### Usefull address
 
