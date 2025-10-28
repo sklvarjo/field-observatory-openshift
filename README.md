@@ -67,6 +67,16 @@ So you can use it in your terminals.
 
 Remove unnecessary files (helm-v4.0.0-beta.1-linux-amd64.tar.gz, linux-amd64/)
 
+#### HELM debug things 
+
+    # Run in teh same folder as the chart.yaml
+    helm lint . 
+    # And you'll see possibly things that the helm does not understand
+
+    # Run in the same folder as the chart.yaml
+    helm template testing . --debug
+    # And you'll see what Helm creates
+
 ### Temporary pods
 
 How to run an interacive temporary pod (bash).
