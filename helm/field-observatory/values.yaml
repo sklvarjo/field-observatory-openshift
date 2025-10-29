@@ -1,0 +1,312 @@
+# This is a YAML-formatted file.
+
+# Values for Field Observatory.
+
+# -------------------------------------------------------------------------------
+# Common variables
+# -------------------------------------------------------------------------------
+
+# Who created this Chart and from where
+maintainer: samu.varjonen@fmi.fi
+company: FMI
+
+# The image registry from which the images should be searched from
+imageRegistry: image-registry.openshift-image-registry.svc:5000
+# The namespace that is used with the above, i.e., the project name
+namespace: field-observatory
+
+# -------------------------------------------------------------------------------
+# Organizational specifics here for the nfs mount that 
+# are shared between the pods and cronjobs
+nfs:
+  name: fo-data
+  mountPath: /data
+  path: /cephfs/fmipecan/openshift
+  server: 193.166.192.22
+  readOnly: false
+  runAsGroup: 5107
+
+# -------------------------------------------------------------------------------
+# PODS
+# -------------------------------------------------------------------------------
+
+  # List of pods to be installed. Each pod can have the following fields. 
+  #
+  #podname:
+  #  enabled                      : true/false - should this pod be installed, if not present is interpreted as false
+  #  name                         : string (required) - name of the pod
+  #  image                        : string (required) - name of the image uploaded to the internal image registry
+  #  imageTag                     : string (optional / default latest) - Tag for the image name used
+  #  application                  : string (required) - Name for the metadata label app
+  #  command                      : str (required) - e.g. '[ "/bin/ash", "-c", "--" ]'
+  #  args                         : str (optional) - e.g. '[ "while true; do sleep 30; done;" ]'
+  #  failedJobsHistoryLimit       : int (optional / default 1) - How many failed job pods are saved
+  #  successfulJobsHistoryLimit   : int (optional / default 1) - How many successful job pods are saved
+  #  restartPolicy                : string (optional / default Never) - Restart policy
+  #
+  # MOUNTS
+  #
+  # List of mounts to be done
+  # Can be an NFS mount see common section above for more details 
+  #
+  # pods:
+  #   pods-name:
+  #     mounts:
+  #       - name: nfs
+  #         nfs: true
+  #
+  # or can contain, at the moment this is not automatically created
+  #
+  # pods:
+  #   pods-name:
+  #     mounts:
+  #       - name: pvc-name
+  #
+  # RESOURCES 
+  #
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. But if you need them the following section is allowed in the
+  # pods. 
+  #
+  # pods:
+  #   pods-name:
+  #     resources:
+  #       limits      
+  #         cpu: 100m
+  #         memory: 128Mi
+  #       requests:
+  #         cpu: 100m
+  #         memory: 128Mi
+  # 
+  # You can also omit parts of the resource section, for example
+  #
+  # pods: 
+  #   pods-name:
+  #     resources:
+  #       requests:
+  #         memory: 256Mi
+
+pods:
+  # -----------------------------------------------------------------------------
+  hatakkaj:
+    enabled: true
+    name: hatakkaj-receiver
+    image: hatakkaj-receiver
+    application: hatakkaj-receiver
+    mounts:
+      - name: nfs
+        nfs: true
+    command: '[ "/bin/ash", "-c", "--" ]'
+    args: '[ "while true; do sleep 30; done;" ]'
+
+# -------------------------------------------------------------------------------
+# CRONJOBS
+# -------------------------------------------------------------------------------
+
+cronjobs:
+
+  # List of cronjobs to be installed. Each cronjob can have the following fields. 
+  #
+  #podname:
+  #  enabled                      : true/false - Should this cronjon be installed, if not present is interpreted as false
+  #  suspend                      : true/false - Is the cronjob suspended
+  #  name                         : string (required) - Name of the cronjob
+  #  image                        : string (required) - Name of the image uploaded to the internal image registry
+  #  imageTag                     : string (optional / default latest) - Tag for the image name used
+  #  command                      : str (required) - e.g. '[ "/bin/ash", "-c", "--" ]'
+  #  args                         : str (optional) - e.g. '[ "while true; do sleep 30; done;" ]'
+  #  failedJobsHistoryLimit       : int (optional / default 1) - How many failed job pods are saved
+  #  successfulJobsHistoryLimit   : int (optional / default 1) - How many successful job pods are saved
+  #  restartPolicy                : string (optional / default Never) - Restart policy
+  #  schedule                     : string (optional / default "0 1 * * *" - When is this cronjob run
+  #  concurrencyPolicy            : string (optional / default Forbid) - Is another job started if the last one is running
+  #
+  # MOUNTS
+  #
+  # List of mounts to be done
+  # Can be an NFS mount see common section above for more details 
+  #
+  #   mounts:
+  #     - name: nfs
+  #       nfs: true
+  #
+  # or can contain, at the moment this is not automatically created
+  #
+  #   mounts:
+  #     - name: pvc-name
+  #
+  # CONFIGMAPS
+  #
+  # Config maps are allowed and below is an example of one. 
+  # 
+  # cronjobs:
+  #  cronjob-name:
+  #    configMaps:
+  #      - name: rclone-conf
+  #        enabled: true
+  #        mountPath: /conf/rclone.conf
+  #        subPath: rclone.conf
+  #        data: |
+  #          multiline content
+  #          can be inserted here
+  #
+  # RESOURCES 
+  #
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. But if you need them the following section is allowed in the
+  # cronjobs. 
+  #
+  # cronjobs:
+  #   cronjobs-name:
+  #     resources:
+  #       limits      
+  #         cpu: 100m
+  #         memory: 128Mi
+  #       requests:
+  #         cpu: 100m
+  #         memory: 128Mi
+  # 
+  # You can also omit parts of the resource section, for example
+  #
+  # cronjobs:
+  #   cronjobs-name:
+  #     resources:
+  #       requests:
+  #         memory: 256Mi
+
+  # -----------------------------------------------------------------------------
+  datasense:
+    enabled: true
+    name: datasense
+    image: fieldobs-datasense
+    mounts:
+      - name: nfs
+        nfs: true
+    schedule: "1 */1 * * *"
+    command: '["/bin/bash", "-c"]'
+    args: "python -m fieldobs_datasense /data/field-observatory/field-observatory.yml 2>&1 | tee -a /data/field-observatory/logs/datasense-cronjob.log"
+  # -----------------------------------------------------------------------------
+  smhi:
+    enabled: true
+    name: smhi
+    image: fieldobs-smhi
+    mounts:
+      - name: nfs
+        nfs: true
+    schedule: "1 */1 * * *"
+    command: '["/bin/bash", "-c"]'
+    args: "python -m fieldobs_smhi.smhi update /data/field-observatory/field-observatory.yml 2>&1 | tee -a /data/field-observatory/logs/smhi-cronjob.log"
+  # -----------------------------------------------------------------------------
+  fmi-meteo-downloader:
+    enabled: true
+    name: fmi-meteodownloader
+    image: fmi-meteo-downloader
+    mounts:
+      - name: nfs
+        nfs: true
+    schedule: "1 */1 * * *"
+    command: '["/bin/bash", "-c"]'
+    args: "python3 -u /project/src/main.py -s 1 2>&1 | tee -a /data/field-observatory/logs/fmi-meteo-downloader-cronjob.log"
+  # -----------------------------------------------------------------------------
+  icos-downloader:
+    enabled: true
+    name: icos-downloader
+    image: icos-downloader
+    mounts:
+      - name: nfs
+        nfs: true
+    schedule: "0 1 * * *"
+    command: '["/bin/bash", "-c"]'
+    args: "Rscript download_and_process.R 2>&1 | tee -a /data/field-observatory/logs/icos-downloader-cronjob.log"
+  # -----------------------------------------------------------------------------
+  hy-rclone:
+    enabled: true
+    name: hy-rclone
+    image: hy-rclone
+    mounts:
+      - name: nfs
+        nfs: true
+    configMaps:
+      - name: rclone-conf
+        enabled: true
+        mountPath: /conf/rclone.conf
+        subPath: rclone.conf
+        content: |
+          [uh_datacloud]
+          type = webdav
+          url = https://datacloud.helsinki.fi/public.php/webdav
+          vendor = owncloud
+          user = Ce5kQ9KL9wBeY3K
+    schedule: "1 0 * * *"
+    command: '["/bin/sh", "-c"]'
+    args: "rclone sync --config /conf/rclone.conf --ignore-times --verbose uh_datacloud: /data/hy-eddy2/data/ --exclude '{rottas,Rottas}*'  2>&1 | tee -a /data/field-observatory/logs/hy-rclone-cronjob.log"
+  # -----------------------------------------------------------------------------
+  gap-filling:
+    enabled: true
+    name: gap-filling
+    image: fieldobs-ecsites
+    mounts:
+      - name: nfs
+        nfs: true
+    schedule: "1 0 * * *"
+    command: '["/bin/bash", "-c"]'
+    args: "python -m fieldobs_ecsites.ecsites run_gapfilling /data/field-observatory/field-observatory.yml 2>&1 | tee -a /data/field-observatory/logs/run-gapfilling-cronjob.log"
+  # -----------------------------------------------------------------------------
+  ec-update-data-to-ui:
+    enabled: false
+    name: ec-update-data-to-ui
+    image: fieldobs-ecsites
+    mounts:
+      - name: nfs
+        nfs: true
+    schedule: "1 0 * * *"
+    command: '["/bin/bash", "-c"]'
+    args: "python -m fieldobs_ecsites.ecsites update_ec_data_to_ui /data/field-observatory/field-observatory.yml 2>&1 | tee -a /data/field-observatory/logs/update-ec-data-to-ui-cronjob.log"
+  # -----------------------------------------------------------------------------
+  ec-update-smear:
+    enabled: true
+    name: ec-update-smear
+    image: fieldobs-ecsites
+    mounts:
+      - name: nfs
+        nfs: true
+    schedule: "1 0 * * *"
+    command: '["/bin/bash", "-c"]'
+    args: "python -m fieldobs_ecsites.ecsites update_smear_flux_to_observations /data/field-observatory/field-observatory.yml --site_id viikki 2>&1 | tee -a /data/field-observatory/logs/update-smear-flux-to-observations-cronjob.log"
+  # -----------------------------------------------------------------------------
+  radobs:
+    enabled: true
+    name: radobs
+    image: fieldobs-radobs
+    mounts:
+      - name: nfs
+        nfs: true
+    schedule: "1 0 * * *"
+    command: '["/bin/bash", "-c"]'
+    args: "python -m fieldobs_radobs /data/field-observatory/field-observatory.yml 2>&1 | tee -a /data/field-observatory/logs/radobs-cronjob.log"
+  # -----------------------------------------------------------------------------
+  satobs:
+    enabled: true
+    name: satobs
+    image: fieldobs-satobs
+    mounts:
+      - name: nfs
+        nfs: true
+    schedule: "0 6 * * *"
+    command: '["/bin/bash", "-c"]'
+    args: "python -m fieldobs_satobs /data/field-observatory/field-observatory.yml 2>&1 | tee -a /data/field-observatory/logs/satobs-cronjob.log"
+  # -----------------------------------------------------------------------------
+  update-ui-geojsons:
+    enabled: false
+    name: update-ui-geojsons
+    image: update-ui-geojsons
+    mounts:
+      - name: nfs
+        nfs: true
+    schedule: "1 0 * * *"
+    command: '["/bin/bash", "-c"]'
+    args: "python3 -u -m /app/fieldobs_utils/fieldobs_utils.bucket update_metadata field-observatory.yml --update_ui_geojsons 2>&1 | tee -a /data/field-observatory/logs/update-ui-geojsons-cronjob.log"
+  # -------------------------------------------------------------------------------
+  # ECMWF DOWNLOADER TODO STILL

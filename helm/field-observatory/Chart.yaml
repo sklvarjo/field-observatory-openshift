@@ -1,0 +1,44 @@
+apiVersion: v2
+name: field-observatory
+icon: https://avatars.githubusercontent.com/u/203832055?s=400&u=01fe6c5083e48f64a7e2a470b3f2a892dd0234e1&v=4
+description: A Helm chart FMI's Field Observatory
+
+Description: >
+  Agriculture, forestry, and urban green space management can mitigate climate change.
+  In Carbon Action, farmers, companies, and scientists work together to develop
+  regenerative ecosystem management options that sequester atmospheric carbon,
+  support adaptation to climate change, help biodiversity, and promote sustainable land use.
+  What are the actual effects on ecosystem functions and carbon storage?
+  Field Observatory strives to answer.
+  ...
+  This chart will bootstrap the field-observatory deployment on Openshift cluster.
+
+# A chart can be either an 'application' or a 'library' chart.
+#
+# Application charts are a collection of templates that can be packaged into versioned archives
+# to be deployed.
+#
+# Library charts provide useful utilities or functions for the chart developer. They're included as
+# a dependency of application charts to inject those utilities and functions into the rendering
+# pipeline. Library charts do not define any templates and therefore cannot be deployed.
+type: application
+
+# This is the chart version. This version number should be incremented each time you make changes
+# to the chart and its templates, including the app version.
+# Versions are expected to follow Semantic Versioning (https://semver.org/)
+version: 0.1.0
+
+# This is the version number of the application being deployed. This version number should be
+# incremented each time you make changes to the application. Versions are not expected to
+# follow Semantic Versioning. They should reflect the version the application is using.
+# It is recommended to use it with quotes.
+appVersion: "1.16.0"
+
+# List of people that maintain this helm chart.
+maintainers:
+  - name: Samu Varjonen
+    email: samu.varjonen@fmi.fi
+
+# location of source code
+sources:
+  - https://github.com/fmi-calculator/

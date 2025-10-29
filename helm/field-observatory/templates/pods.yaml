@@ -1,0 +1,81 @@
+{{- range $pods := $.Values.pods }}
+{{- if $pods.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    # -- comment
+    app: {{ required "Specify application label for metadata!" $pods.application }}
+  name: {{ required "Specify the name for the pod!" $pods.name }}
+  namespace: {{ required "Specify the namespace!" $.Values.namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ $pods.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ $pods.name }}
+    spec:
+      volumes:
+        {{- range $mount := $pods.mounts }}
+        {{- if $mount.nfs }}
+        - name: {{ $.Values.nfs.name }}
+          nfs:
+            path: {{ $.Values.nfs.path}}
+            server: {{ $.Values.nfs.server }}
+            readOnly: {{ $.Values.nfs.readOnly }}
+        {{- else }}
+        - name: {{ $mount.name }}
+          persistentVolumeClaim:
+            claimName: {{ $mount.name }}
+        {{- end }}
+        {{- end }}
+      containers:
+      {{- $ir := required "You have to give the $.Values.imageRegistry" $.Values.imageRegistry }}
+      {{- $im := required "You have to specify the cronjobs.*.image" $pods.image }}
+      {{- $it := $pods.imageTag | default "latest" }}
+      - image: {{ printf "%s/%s/%s:%s" $ir $.Values.namespace $im $it }}
+        name: {{ $pods.name }}
+        imagePullPolicy: Always
+        command: {{ required "Specify command for the pod!" $pods.command }}
+        {{- if hasKey $pods "args" }}
+        args: {{ $pods.args }}
+        {{- end }}
+        volumeMounts:
+          {{- range $mount := $pods.mounts }}
+          {{- if $mount.nfs }}
+          - name: {{ $.Values.nfs.name }}
+            mountPath: {{ $.Values.nfs.mountPath }}
+          {{- else }}
+          - name: {{ $mount.name }}
+            mountPath: {{ $mount.mountPath }}
+          {{- end }}
+          {{- end }}
+        {{- if hasKey $pods "resources" }}
+        resources:
+          {{- if hasKey $pods.resources "limits" }}
+          limits:
+            {{- if hasKey $pods.resources.limits "cpu" }}
+            cpu: {{ $pods.resources.limits.cpu }}
+            {{- end }}
+            {{- if hasKey $pods.resources.limits "memory" }}
+            memory: {{ $pods.resources.limits.memory }}
+            {{- end }}
+          {{- end }}
+          {{- if hasKey $pods.resources "requests" }}
+          requests:
+            {{- if hasKey $pods.resources.requests "cpu" }}
+            cpu: {{ $pods.resources.requests.cpu }}
+            {{- end }}
+            {{- if hasKey $pods.resources.requests "memory" }}
+            memory: {{ $pods.resources.requests.memory }}
+            {{- end }}
+          {{- end }}
+        {{- end }}
+      restartPolicy: {{ $pods.restartPolicy | default "Never" }}
+      securityContext:
+        runAsGroup: {{ $.Values.nfs.runAsGroup }}
+{{- end }}
+{{- end }}

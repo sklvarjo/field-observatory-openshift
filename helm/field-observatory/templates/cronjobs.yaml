@@ -1,0 +1,96 @@
+{{- range $crons := $.Values.cronjobs }}
+{{- if $crons.enabled }}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ required "You have to give a name to the cronjobs.*.name! " $crons.name }}-cronjob
+  namespace: {{ required "You have to specify the $.Values.namespace!" $.Values.namespace }}
+spec:
+  schedule: '{{ $.Values.cronjobs.datasense.schedule | default "0 1 * * *" }}'
+  suspend: {{ $crons.suspend | default "false" }}
+  concurrencyPolicy: {{ $crons.concurrencyPolicy | default "Forbid" }}
+  successfulJobsHistoryLimit: {{ $crons.successfulJobsHistoryLimit | default 1 }}
+  failedJobsHistoryLimit: {{ $crons.failedJobsHistoryLimit | default 1}}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          {{- if hasKey $crons "mounts" }}
+          volumes:
+            {{- range $mount := $crons.mounts }}
+            {{- if $mount.nfs }}
+            - name: {{ $.Values.nfs.name }}
+              nfs:
+                path: {{ $.Values.nfs.path}}
+                server: {{ $.Values.nfs.server }}
+                readOnly: {{ $.Values.nfs.readOnly }}
+            {{- else }}
+            - name: {{ $mount.name }}
+              persistentVolumeClaim:
+                claimName: {{ $mount.name }}
+            {{- end }}
+            {{- end }}
+            {{- if hasKey $crons "configMaps" }}
+            {{- range $configmaps := $crons.configMaps }}
+            {{- if $configmaps.enabled }}
+            - name: {{ $configmaps.name }}
+              configMap:
+                name: {{ $configmaps.name }}
+            {{- end }}
+            {{- end }}
+            {{- end }}
+          {{- end }}
+          containers:
+            - name: {{ $crons.name }}
+              {{- $ir := required "You have to give the $.Values.imageRegistry" $.Values.imageRegistry }}
+              {{- $im := required "You have to specify the cronjobs.*.image" $crons.image }}
+              {{- $it := $crons.imageTag | default "latest" }}
+              image: {{ printf "%s/%s/%s:%s" $ir $.Values.namespace $im $it }}
+              command: {{ required "You have to specify container command!" $crons.command }}
+              {{- if hasKey $crons "args" }}
+              args: {{ quote $crons.args }}
+              {{- end }}
+              volumeMounts:
+                {{- range $mount := $crons.mounts }}
+                {{- if $mount.nfs }}
+                - name: {{ $.Values.nfs.name }}
+                  mountPath: {{ $.Values.nfs.mountPath }}
+                {{- else }}
+                - name: {{ $mount.name }}
+                  mountPath: {{ $mount.mountPath }}
+                {{- end }}
+                {{- end }}
+                {{- if hasKey $crons "configMaps" }}
+                {{- range $configmaps := $crons.configMaps }}
+                {{- if $configmaps.enabled }}
+                - name: {{ $configmaps.name }}
+                  mountPath: {{ $configmaps.mountPath }}
+                  subPath: {{ $configmaps.subPath }}
+                {{- end }}
+                {{- end }}
+                {{- end }}
+              {{- if hasKey $crons "resources" }}
+              resources:
+                {{- if hasKey $crons.resources "limits" }}
+                limits:
+                  {{- if hasKey $crons.resources.limits "cpu" }}
+                  cpu: {{ $crons.resources.limits.cpu }}
+                  {{- end }}
+                  {{- if hasKey $crons.resources.limits "memory" }}
+                  memory: {{ $crons.resources.limits.memory }}
+                  {{- end }}
+                {{- end }}
+                {{- if hasKey $crons.resources "requests" }}
+                requests:
+                  {{- if hasKey $crons.resources.requests "cpu" }}
+                  cpu: {{ $crons.resources.requests.cpu }}
+                  {{- end }}
+                  {{- if hasKey $crons.resources.requests "memory" }}
+                  memory: {{ $crons.resources.requests.memory }}
+                  {{- end }}
+                {{- end }}
+              {{- end }}
+          restartPolicy: {{ $crons.restartPolicy | default "Never" }}
+{{- end }}
+{{- end }}
