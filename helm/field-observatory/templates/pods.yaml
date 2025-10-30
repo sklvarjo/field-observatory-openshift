@@ -1,3 +1,4 @@
+{{ $labels := include "field-observatory.labels" . | indent 2 }}
 {{- range $pods := $.Values.pods }}
 {{- if $pods.enabled }}
 ---
@@ -8,6 +9,7 @@ metadata:
     app: {{ required "Specify application label for metadata!" $pods.application }}
   name: {{ required "Specify the name for the pod!" $pods.name }}
   namespace: {{ required "Specify the namespace!" $.Values.namespace }}
+{{ $labels }}
 spec:
   selector:
     matchLabels:

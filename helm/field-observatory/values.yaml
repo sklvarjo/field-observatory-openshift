@@ -15,6 +15,10 @@ imageRegistry: image-registry.openshift-image-registry.svc:5000
 # The namespace that is used with the above, i.e., the project name
 namespace: field-observatory
 
+# This is to override the chart name.
+nameOverride: ""
+fullnameOverride: ""
+
 # -------------------------------------------------------------------------------
 # Organizational specifics here for the nfs mount that 
 # are shared between the pods and cronjobs

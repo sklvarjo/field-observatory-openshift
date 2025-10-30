@@ -1,3 +1,4 @@
+{{ $labels := include "field-observatory.labels" . | indent 2 }}
 {{- range $crons := $.Values.cronjobs }}
 {{- if $crons.enabled }}
 ---
@@ -5,7 +6,8 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: {{ required "You have to give a name to the cronjobs.*.name! " $crons.name }}-cronjob
-  namespace: {{ required "You have to specify the $.Values.namespace!" $.Values.namespace }}
+  namespace: {{ required "You have to specify the .Values.namespace!" $.Values.namespace }}
+{{ $labels }}
 spec:
   schedule: '{{ $.Values.cronjobs.datasense.schedule | default "0 1 * * *" }}'
   suspend: {{ $crons.suspend | default "false" }}

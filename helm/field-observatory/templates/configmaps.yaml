@@ -1,3 +1,4 @@
+{{ $labels := include "field-observatory.labels" . | indent 2 }}
 {{- range $crons := $.Values.cronjobs }}
 {{- if $crons.enabled }}
 {{- if hasKey $crons "configMaps" }}
@@ -10,6 +11,7 @@ apiVersion: v1
 metadata:
   name: {{ $cmaps.name }}
   namespace: {{ required "Specify $.Values.namespace!" $.Values.namespace }}
+{{ $labels }}
 data:
   {{required "Specify subPath, i.e., filename!" $cmaps.subPath }}: {{- $cmaps.content | toYaml | indent 1}}
 {{- end }}
