@@ -199,7 +199,7 @@ cronjobs:
     command: '["/bin/bash", "-c"]'
     args: "python -m fieldobs_smhi.smhi update /data/field-observatory/field-observatory.yml 2>&1 | tee -a /data/field-observatory/logs/smhi-cronjob.log"
   # -----------------------------------------------------------------------------
-  fmi-meteo-downloader:
+  fmiMeteoDownloader:
     enabled: true
     name: fmi-meteodownloader
     image: fmi-meteo-downloader
@@ -210,7 +210,7 @@ cronjobs:
     command: '["/bin/bash", "-c"]'
     args: "python3 -u /project/src/main.py -s 1 2>&1 | tee -a /data/field-observatory/logs/fmi-meteo-downloader-cronjob.log"
   # -----------------------------------------------------------------------------
-  icos-downloader:
+  icosDownloader:
     enabled: true
     name: icos-downloader
     image: icos-downloader
@@ -221,7 +221,7 @@ cronjobs:
     command: '["/bin/bash", "-c"]'
     args: "Rscript download_and_process.R 2>&1 | tee -a /data/field-observatory/logs/icos-downloader-cronjob.log"
   # -----------------------------------------------------------------------------
-  hy-rclone:
+  hyRclone:
     enabled: true
     name: hy-rclone
     image: hy-rclone
@@ -243,7 +243,7 @@ cronjobs:
     command: '["/bin/sh", "-c"]'
     args: "rclone sync --config /conf/rclone.conf --ignore-times --verbose uh_datacloud: /data/hy-eddy2/data/ --exclude '{rottas,Rottas}*'  2>&1 | tee -a /data/field-observatory/logs/hy-rclone-cronjob.log"
   # -----------------------------------------------------------------------------
-  gap-filling:
+  gapFilling:
     enabled: true
     name: gap-filling
     image: fieldobs-ecsites
@@ -254,7 +254,7 @@ cronjobs:
     command: '["/bin/bash", "-c"]'
     args: "python -m fieldobs_ecsites.ecsites run_gapfilling /data/field-observatory/field-observatory.yml 2>&1 | tee -a /data/field-observatory/logs/run-gapfilling-cronjob.log"
   # -----------------------------------------------------------------------------
-  ec-update-data-to-ui:
+  ecUpdateDataToUi:
     enabled: false
     name: ec-update-data-to-ui
     image: fieldobs-ecsites
@@ -265,7 +265,7 @@ cronjobs:
     command: '["/bin/bash", "-c"]'
     args: "python -m fieldobs_ecsites.ecsites update_ec_data_to_ui /data/field-observatory/field-observatory.yml 2>&1 | tee -a /data/field-observatory/logs/update-ec-data-to-ui-cronjob.log"
   # -----------------------------------------------------------------------------
-  ec-update-smear:
+  ecUpdateSmear:
     enabled: true
     name: ec-update-smear
     image: fieldobs-ecsites
@@ -298,7 +298,7 @@ cronjobs:
     command: '["/bin/bash", "-c"]'
     args: "python -m fieldobs_satobs /data/field-observatory/field-observatory.yml 2>&1 | tee -a /data/field-observatory/logs/satobs-cronjob.log"
   # -----------------------------------------------------------------------------
-  update-ui-geojsons:
+  updateUiGeojsons:
     enabled: false
     name: update-ui-geojsons
     image: update-ui-geojsons
