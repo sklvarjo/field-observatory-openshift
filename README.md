@@ -69,13 +69,25 @@ Remove unnecessary files (helm-v4.0.0-beta.1-linux-amd64.tar.gz, linux-amd64/)
 
 #### HELM debug things 
 
-    # Run in teh same folder as the chart.yaml
+    # Run in the same folder as the chart.yaml
     helm lint . 
     # And you'll see possibly things that the helm does not understand
 
     # Run in the same folder as the chart.yaml
-    helm template testing . --debug
+    helm template release-name . --debug
     # And you'll see what Helm creates
+
+    # Following will render everything including notes to stdout
+    $ helm install --dry-run release-name .
+
+    # if a separate values file is needed it can be overridden
+    $ helm template -f second.values.yaml release-name . --debug
+    # or
+    $ helm install --dry-run -f second.values.yaml release-name .
+
+    # simple value substitution
+    $ helm template release-name . --set namespace=new-namespace
+    # setting the key to null will remove it
 
 ### Temporary pods
 
