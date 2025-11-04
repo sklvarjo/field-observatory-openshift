@@ -3,7 +3,7 @@
 
 ### Building the container
 
-    export DOCKER_BUILDKIT=1;docker build --secret id=git_token,src=../secret_token.txt -f fieldobs-update_ui_geojsons.Dockerfile -t fieldobs-update_ui_geojsons .
+    export DOCKER_BUILDKIT=1;docker build --secret id=git_token,src=../secret_token.txt -f fieldobs-update-ui-geojsons.Dockerfile -t fieldobs-update-ui-geojsons .
 
 ### Local build and pushing the image to openshift integrated repository
 
