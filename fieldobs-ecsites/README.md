@@ -36,6 +36,8 @@ Push the image to the Openshift's image registry
 
 **NOTE:** Use "oc replace -f-" instead of "oc create -f-" when making changes. Easier than removing and creating again.
 
+**NOTE:** update ec site allows also "--recompute-all true --site_filter viikki --data_type_filter meteo,precipitation"
+
 **NOTE:** If just changing runtime might be easier to run 
 
     $ oc patch cronjob fieldobs-ecsites-run-gapfilling-cronjob -p '{"spec": {"schedule": "3 */1 * * *"}}'
