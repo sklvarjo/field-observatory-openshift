@@ -303,9 +303,9 @@ cronjobs:
     args: "python -m fieldobs_satobs /data/field-observatory/field-observatory.yml 2>&1 | tee -a /data/field-observatory/logs/satobs-cronjob.log"
   # -----------------------------------------------------------------------------
   updateUiGeojsons:
-    enabled: false
-    name: update-ui-geojsons
-    image: update-ui-geojsons
+    enabled: true
+    name: fieldobs-update-ui-geojsons
+    image: fieldobs-update-ui-geojsons
     mounts:
       - name: nfs
         nfs: true
