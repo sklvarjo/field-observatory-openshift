@@ -309,7 +309,7 @@ cronjobs:
     mounts:
       - name: nfs
         nfs: true
-    schedule: "1 0 * * *"
+    schedule: "5 */1 * *"
     command: '["/bin/bash", "-c"]'
     args: "python3 -u -m /app/fieldobs_utils/fieldobs_utils.bucket update_metadata field-observatory.yml --update_ui_geojsons 2>&1 | tee -a /data/field-observatory/logs/update-ui-geojsons-cronjob.log"
   # -------------------------------------------------------------------------------

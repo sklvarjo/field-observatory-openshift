@@ -6,7 +6,7 @@ metadata:
   name: fieldobs-update-ui-geojsons-cronjob
   namespace: field-observatory
 spec:
-  schedule: '0 1 * * *'
+  schedule: '5 */1 * * *'
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1
   jobTemplate:
@@ -23,7 +23,7 @@ spec:
             - name: fieldobs-update-ui-geojsons
               image: image-registry.openshift-image-registry.svc:5000/field-observatory/fieldobs-update-ui-geojsons:latest
               command: ["/bin/bash", "-c"]
-              args: ["python3 -u -m /app/fieldobs_utils/fieldobs_utils.bucket update_metadata field-observatory.yml --update_ui_geojsons 2>&1 | tee -a /data/field-observatory/logs/update-ui-geojsons-cronjob.log"]
+              args: ["python3 -u -m fieldobs_utils.bucket update_metadata /data/field-observatory/field-observatory.yml --update_ui_geojsons 2>&1 | tee -a /data/field-observatory/logs/fieldobs-update-ui-geojsons-cronjob.log"]
               volumeMounts:
                 - name: fo-data
                   mountPath: /data
