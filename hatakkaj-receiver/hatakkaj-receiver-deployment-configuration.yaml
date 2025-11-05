@@ -20,7 +20,7 @@ spec:
             server: 193.166.192.225
             readOnly: false
       containers:
-      - image: image-registry.openshift-image-registry.svc:5000/field-observatory/icos-downloader/hatakkaj-receiver:latest
+      - image: image-registry.openshift-image-registry.svc:5000/field-observatory/hatakkaj-receiver:latest
         name: hatakkaj-receiver
         imagePullPolicy: Always
         command: [ "/bin/ash", "-c", "--" ]
