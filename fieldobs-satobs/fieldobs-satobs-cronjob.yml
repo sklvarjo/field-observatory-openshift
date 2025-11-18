@@ -22,6 +22,11 @@ spec:
           containers:
             - name: filedobs-satobs
               image: image-registry.openshift-image-registry.svc:5000/field-observatory/fieldobs-satobs:latest
+              resources:
+                limits:
+                  memory: 512Mi
+                requests:
+                  memory: 128Mi
               command: ["/bin/bash", "-c"]
               args: ["python -m fieldobs_satobs /data/field-observatory/field-observatory.yml 2>&1 | tee -a /data/field-observatory/logs/fieldobs-satobs-cronjob.log"]
               volumeMounts:

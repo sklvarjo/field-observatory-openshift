@@ -19,6 +19,11 @@ spec:
       containers:
       - name: fieldobs-radobs-init
         image: image-registry.openshift-image-registry.svc:5000/field-observatory/fieldobs-radobs:latest
+        resources:
+          limits:
+            memory: 512Mi
+          requests:
+            memory: 128Mi
         command: ["/bin/bash", "-c"]
         args: ["python -m fieldobs_radobs.radobs run_radobs /data/field-observatory/field-observatory.yml --reinit 2>&1 | tee -a /data/field-observatory/logs/fieldobs-radobs-init-job.log"]
         volumeMounts:

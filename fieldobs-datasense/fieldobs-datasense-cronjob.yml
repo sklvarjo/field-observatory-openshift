@@ -22,6 +22,11 @@ spec:
           containers:
             - name: filedobs-datasense
               image: image-registry.openshift-image-registry.svc:5000/field-observatory/fieldobs-datasense:latest
+              resources:
+                limits:
+                  memory: 512Mi
+                requests:
+                  memory: 128Mi
               command: ["/bin/bash", "-c"]
               args: ["python -m fieldobs_datasense /data/field-observatory/field-observatory.yml 2>&1 | tee -a /data/field-observatory/logs/fieldobs-datasense-cronjob.log"]
               volumeMounts:

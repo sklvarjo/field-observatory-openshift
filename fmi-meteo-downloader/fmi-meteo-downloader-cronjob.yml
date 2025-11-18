@@ -22,6 +22,11 @@ spec:
           containers:
             - name: fmi-meteo-downloader
               image: image-registry.openshift-image-registry.svc:5000/field-observatory/fmi-meteo-downloader:latest
+              resources:
+                limits:
+                  memory: 512Mi
+                requests:
+                  memory: 128Mi
               command: ["/bin/bash", "-c"]
               args: ["python3 -u /project/src/main.py -s 1 2>&1 | tee -a /data/field-observatory/logs/fmi-meteo-downloader-cronjob.log"]
               volumeMounts:

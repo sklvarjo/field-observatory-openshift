@@ -22,6 +22,11 @@ spec:
           containers:
             - name: fieldobs-update-ui-geojsons
               image: image-registry.openshift-image-registry.svc:5000/field-observatory/fieldobs-update-ui-geojsons:latest
+              resources:
+                limits:
+                  memory: 512Mi
+                requests:
+                  memory: 128Mi
               command: ["/bin/bash", "-c"]
               args: ["python3 -u -m fieldobs_utils.bucket update_metadata /data/field-observatory/field-observatory.yml --update_ui_geojsons 2>&1 | tee -a /data/field-observatory/logs/fieldobs-update-ui-geojsons-cronjob.log"]
               volumeMounts:

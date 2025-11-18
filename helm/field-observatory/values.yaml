@@ -165,7 +165,7 @@ cronjobs:
   # cronjobs:
   #   cronjobs-name:
   #     resources:
-  #       limits      
+  #       limits:      
   #         cpu: 100m
   #         memory: 128Mi
   #       requests:
@@ -189,6 +189,11 @@ cronjobs:
       - name: nfs
         nfs: true
     schedule: "1 */1 * * *"
+    resources:
+      limits:
+        memory: 512Mi
+      requests:
+        memory: 128Mi
     command: '["/bin/bash", "-c"]'
     args: "python -m fieldobs_datasense /data/field-observatory/field-observatory.yml 2>&1 | tee -a /data/field-observatory/logs/datasense-cronjob.log"
   # -----------------------------------------------------------------------------
@@ -200,6 +205,11 @@ cronjobs:
       - name: nfs
         nfs: true
     schedule: "1 */1 * * *"
+    resources:
+      limits:
+        memory: 512Mi
+      requests:
+        memory: 128Mi
     command: '["/bin/bash", "-c"]'
     args: "python -m fieldobs_smhi.smhi update /data/field-observatory/field-observatory.yml 2>&1 | tee -a /data/field-observatory/logs/smhi-cronjob.log"
   # -----------------------------------------------------------------------------
@@ -211,6 +221,11 @@ cronjobs:
       - name: nfs
         nfs: true
     schedule: "1 */1 * * *"
+    resources:
+      limits:
+        memory: 512Mi
+      requests:
+        memory: 128Mi
     command: '["/bin/bash", "-c"]'
     args: "python3 -u /project/src/main.py -s 1 2>&1 | tee -a /data/field-observatory/logs/fmi-meteo-downloader-cronjob.log"
   # -----------------------------------------------------------------------------
@@ -222,6 +237,11 @@ cronjobs:
       - name: nfs
         nfs: true
     schedule: "0 1 * * *"
+    resources:
+      limits:
+        memory: 512Mi
+      requests:
+        memory: 128Mi
     command: '["/bin/bash", "-c"]'
     args: "Rscript download_and_process.R 2>&1 | tee -a /data/field-observatory/logs/icos-downloader-cronjob.log"
   # -----------------------------------------------------------------------------
@@ -243,7 +263,12 @@ cronjobs:
           url = https://datacloud.helsinki.fi/public.php/webdav
           vendor = owncloud
           user = Ce5kQ9KL9wBeY3K
-    schedule: "1 0 * * *"
+    schedule: "15 6 * * *"
+    resources:
+      limits:
+        memory: 512Mi
+      requests:
+        memory: 128Mi
     command: '["/bin/sh", "-c"]'
     args: "rclone sync --config /conf/rclone.conf --ignore-times --verbose uh_datacloud: /data/hy-eddy2/data/ --exclude '{rottas,Rottas}*'  2>&1 | tee -a /data/field-observatory/logs/hy-rclone-cronjob.log"
   # -----------------------------------------------------------------------------
@@ -254,7 +279,14 @@ cronjobs:
     mounts:
       - name: nfs
         nfs: true
-    schedule: "1 0 * * *"
+    schedule: "30 7 * * *"
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 2000Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
     command: '["/bin/bash", "-c"]'
     args: "python -m fieldobs_ecsites.ecsites run_gapfilling /data/field-observatory/field-observatory.yml 2>&1 | tee -a /data/field-observatory/logs/run-gapfilling-cronjob.log"
   # -----------------------------------------------------------------------------
@@ -265,7 +297,12 @@ cronjobs:
     mounts:
       - name: nfs
         nfs: true
-    schedule: "1 0 * * *"
+    schedule: "1 */1 * * *"
+    resources:
+      limits:
+        memory: 512Mi
+      requests:
+        memory: 128Mi
     command: '["/bin/bash", "-c"]'
     args: "python -m fieldobs_ecsites.ecsites update_ec_data_to_ui /data/field-observatory/field-observatory.yml 2>&1 | tee -a /data/field-observatory/logs/update-ec-data-to-ui-cronjob.log"
   # -----------------------------------------------------------------------------
@@ -277,6 +314,11 @@ cronjobs:
       - name: nfs
         nfs: true
     schedule: "1 0 * * *"
+    resources:
+      limits:
+        memory: 512Mi
+      requests:
+        memory: 128Mi
     command: '["/bin/bash", "-c"]'
     args: "python -m fieldobs_ecsites.ecsites update_smear_flux_to_observations /data/field-observatory/field-observatory.yml --site_id viikki 2>&1 | tee -a /data/field-observatory/logs/update-smear-flux-to-observations-cronjob.log"
   # -----------------------------------------------------------------------------
@@ -287,7 +329,12 @@ cronjobs:
     mounts:
       - name: nfs
         nfs: true
-    schedule: "1 0 * * *"
+    schedule: "15 10 * * *"
+    resources:
+      limits:
+        memory: 512Mi
+      requests:
+        memory: 128Mi
     command: '["/bin/bash", "-c"]'
     args: "python -m fieldobs_radobs /data/field-observatory/field-observatory.yml 2>&1 | tee -a /data/field-observatory/logs/radobs-cronjob.log"
   # -----------------------------------------------------------------------------
@@ -299,6 +346,11 @@ cronjobs:
       - name: nfs
         nfs: true
     schedule: "0 6 * * *"
+    resources:
+      limits:
+        memory: 512Mi
+      requests:
+        memory: 128Mi
     command: '["/bin/bash", "-c"]'
     args: "python -m fieldobs_satobs /data/field-observatory/field-observatory.yml 2>&1 | tee -a /data/field-observatory/logs/satobs-cronjob.log"
   # -----------------------------------------------------------------------------
@@ -310,6 +362,11 @@ cronjobs:
       - name: nfs
         nfs: true
     schedule: "5 */1 * *"
+    resources:
+      limits:
+        memory: 512Mi
+      requests:
+        memory: 128Mi
     command: '["/bin/bash", "-c"]'
     args: "python3 -u -m /app/fieldobs_utils/fieldobs_utils.bucket update_metadata field-observatory.yml --update_ui_geojsons 2>&1 | tee -a /data/field-observatory/logs/update-ui-geojsons-cronjob.log"
   # -------------------------------------------------------------------------------

@@ -6,7 +6,7 @@ metadata:
   name: hy-rclone-cronjob
   namespace: field-observatory
 spec:
-  schedule: '1 */1 * * *'
+  schedule: '15 6 * * *'
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1
   jobTemplate:
@@ -25,6 +25,11 @@ spec:
           containers:
             - name: hy-rclone
               image: image-registry.openshift-image-registry.svc:5000/field-observatory/hy-rclone:latest
+              resources:
+                limits:
+                  memory: 512Mi
+                requests:
+                  memory: 128Mi
               command: ["/bin/sh", "-c"]
               args: ['rclone sync --config /conf/rclone.conf --ignore-times --verbose uh_datacloud: /data/hy-eddy2/data/ --exclude "{rottas,Rottas}*"  2>&1 | tee -a /data/field-observatory/logs/hy-rclone-cronjob.log']
               volumeMounts:

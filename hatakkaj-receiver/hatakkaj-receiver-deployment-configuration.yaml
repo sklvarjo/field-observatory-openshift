@@ -22,6 +22,11 @@ spec:
       containers:
       - image: image-registry.openshift-image-registry.svc:5000/field-observatory/hatakkaj-receiver:latest
         name: hatakkaj-receiver
+        resources:
+          limits:
+            memory: 512Mi
+          requests:
+            memory: 128Mi
         imagePullPolicy: Always
         command: [ "/bin/ash", "-c", "--" ]
         args: [ "while true; do sleep 30; done;" ]
