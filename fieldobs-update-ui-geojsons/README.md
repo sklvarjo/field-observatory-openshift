@@ -27,9 +27,7 @@ It is the local keyring's master key and the passhrase is your local machines lo
 
     $ docker tag fieldobs-update-ui-geojsons default-route-openshift-image-registry.apps.ock.fmi.fi/field-observatory/fieldobs-update-ui-geojsons
 
-**NOTE:** Every time you build a new image remember to tag the image again as the tag will still point to the old IMAGE ID after the build.
-**NOTE:** Usually it is needed to delete the deployment from openshift and create it again to get the new image to get loaded as that also points to the last IMAGE ID.
-
+**NOTE:** Check that the imageStream for this exists.
     $ docker push default-route-openshift-image-registry.apps.ock.fmi.fi/field-observatory/fieldobs-update-ui-geojsons
 
 ### Deploy on Openshift

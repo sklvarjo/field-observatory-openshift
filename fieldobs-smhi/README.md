@@ -27,6 +27,7 @@ It is the local keyring's master key and the passhrase is your local machines lo
     $ docker tag fieldobs-smhi default-route-openshift-image-registry.apps.ock.fmi.fi/field-observatory/fieldobs-smhi
 
 Push the image to the Openshift's image registry
+**NOTE:** Check that the imageStream for this exists.
 
     $ docker push default-route-openshift-image-registry.apps.ock.fmi.fi/field-observatory/fieldobs-smhi
 
