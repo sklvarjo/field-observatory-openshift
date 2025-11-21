@@ -1,8 +1,0 @@
-*.ini
-*.py
-pyflux/AHY9U3~9
-pyflux/oldres_201809
-pyflux/raw
-pyflux/aux
-pyflux/log
-pyflux_pic

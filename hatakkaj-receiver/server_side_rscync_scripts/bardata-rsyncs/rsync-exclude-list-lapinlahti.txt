@@ -1,9 +1,0 @@
-
-*.ini
-*.py
-pyflux/raw
-pyflux/aux
-pyflux/log
-webcam
-docs
-PDU/
