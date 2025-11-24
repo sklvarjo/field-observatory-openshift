@@ -21,7 +21,9 @@ Build all or just some of the images
       --hatakka           Build Hatakkaj receiver image
       --hy                Build HY rclone image
       --icos              Build ICOS downloader image
-      --all               Build all images
+      --build-all         Build all images
+      --push              Push the images to registry
+      --verbose           Verbose printing when possible
       --tag <tag>         Set environment (default: latest)
       --secret <path>     Set where the secret token (PAT) file is
       --dry-run           Print actions without executing them
@@ -29,9 +31,9 @@ Build all or just some of the images
 
     Examples:
       build-images.sh --datasense
-      build-images.sh --all --tag dev
-      build-images.sh --all --secret ../secret_token.txt
-      build-images.sh --all --dry-run
+      build-images.sh --build-all --tag dev
+      build-images.sh --build-all --secret ../secret_token.txt
+      build-images.sh --build-all --dry-run
 
 ## Running the containers locally
 
