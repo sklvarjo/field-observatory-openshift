@@ -1,12 +1,4 @@
-**TODO:** Document the hatakkaj server side scripts and also the openshift SA and token related things.
-
-#### Local build and pushing the image to openshift integrated repository
-
-Podman would also work and in some cases it is a wiser option. 
-Docker allows you to create things that are not allowed in openshift but for this project it does not matter.
-
-    $ docker build -t hatakkaj-receiver -f hatakkaj-receiver.Dockerfile . 
-To avoid download throttling and blocking, login to docker hub/docker desktop etc. 
+#### Pushing the image to openshift integrated repository
 
 Get the registry info.
 
@@ -26,11 +18,6 @@ It is the local keyring's master key and the passhrase is your local machines lo
 **NOTE:** Check that the imageStream for this exists.
 
     $ docker push default-route-openshift-image-registry.apps.ock.fmi.fi/field-observatory/hatakkaj-receiver
-
-**NOTE:** YOU HAVE TO CHANGE THE IMAGESTREAMS LOOKUP POLICY TO TRUE BY HAND IN CONSOLE.
-Administrator side -> builds -> ImageStreams -> hatakkaj-receiver -> YAML -> "spec: lookupPolicy: local: true" -> save
-or run this in oc
-    $ oc patch is hatakkaj-receiver -p '{"spec": {"lookupPolicy": {"local": true}}}'
 
 ### Install everything...
 

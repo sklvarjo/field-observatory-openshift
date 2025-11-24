@@ -1,13 +1,5 @@
 **TODO:** -
 
-### Building the container
-
-    export DOCKER_BUILDKIT=1;docker build --secret id=git_token,src=../secret_token.txt --no-cache -f fieldobs-radobs.Dockerfile -t fieldobs-radobs .
-
-### Running the container locally
-
-    $ docker run --rm -u $(id -u):$(id -g) -v $(pwd)/testdata:/data fieldobs-radobs
-
 ### Pushing to the openshift image registry
 Get the registry info.
 

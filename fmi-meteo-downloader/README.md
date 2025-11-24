@@ -1,9 +1,4 @@
-## Local build and pushing the image to openshift integrated repository
-
-Podman would also work and in some cases it is a wiser option. 
-Docker allows you to create things that are not allowed in openshift but for this project it does not matter.
-
-    $ export DOCKER_BUILDKIT=1;docker build --secret id=git_token,src=../secret_token.txt --no-cache -f fmi-meteo-downloader.Dockerfile -t fmi-meteo-downloader .
+## Pushing the image to openshift integrated repository
 
 Get the registry info.
 

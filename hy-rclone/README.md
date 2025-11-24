@@ -1,5 +1,3 @@
-This clones the Viikki flux data from datacloud.helsinki.fi to the 
-**/data/hy-eddy2/data/** which is then used in Henriikka's gapfilling.
  
 ### Config map for rclone
 
@@ -30,12 +28,7 @@ To check the contents
 
     $ oc get configmaps rclone-conf -o yaml
 
-### Local build and pushing the image to openshift integrated repository
-
-Podman would also work and in some cases it is a wiser option. 
-Docker allows you to create things that are not allowed in openshift but for this project it does not matter.
-
-    $ docker build -t hy-rclone -f hy-rclone.Dockerfile . 
+### Pushing the image to openshift integrated repository
 
 Get the registry info.
 

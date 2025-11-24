@@ -1,9 +1,4 @@
-#### Local build and pushing the image to openshift integrated repository
-
-Podman would also work and in some cases it is a wiser option. 
-Docker allows you to create things that are not allowed in openshift but for this project it does not matter.
-
-    $ export DOCKER_BUILDKIT=1;docker build --secret id=git_token,src=../secret_token.txt --no-cache -f icos-downloader.Dockerfile -t icos-downloader .
+#### Pushing the image to openshift integrated repository
 
 Get the registry info.
 
@@ -25,11 +20,6 @@ It is the local keyring's master key and the passhrase is your local machines lo
 
     $ docker push default-route-openshift-image-registry.apps.ock.fmi.fi/field-observatory/icos-downloader
 
-**NOTE:** YOU HAVE TO CHANGE THE IMAGESTREAMS LOOKUP POLICY TO TRUE BY HAND IN CONSOLE. **Only after first push**
-Administrator side -> builds -> ImageStreams -> hatakkaj-receiver -> YAML -> "spec: lookupPolicy: local: true" -> save
-or run this in oc
-    $ oc patch is icos-downloader -p '{"spec": {"lookupPolicy": {"local": true}}}'
-
 ### Deploy on Openshift
 
 Upload the cronjob
@@ -45,12 +35,3 @@ Upload the cronjob
 **NOTE:** suspending a cronjob
     $ oc patch cronjob icos-downloader-cronjob -p '{"spec" : {"suspend" : true }}'
 
-### When testing locally ...
-
-#### local test build
-
-    $ docker build -t icos-downloader -f icos-downloader.Dockerfile .
-
-#### local test run
-
-    $ docker run --rm -u $(id -u):$(id -g) -v $(pwd)/testdata:/data icos-downloader

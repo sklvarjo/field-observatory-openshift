@@ -1,16 +1,5 @@
 
-**TODO: FINISH THIS**
-
-### Building the container
-
-    export DOCKER_BUILDKIT=1;docker build --secret id=git_token,src=../secret_token.txt -f fieldobs-update-ui-geojsons.Dockerfile -t fieldobs-update-ui-geojsons .
-
-### Local build and pushing the image to openshift integrated repository
-
-Podman would also work and in some cases it is a wiser option. 
-Docker allows you to create things that are not allowed in openshift but for this project it does not matter.
-
-    $ docker build -t fieldobs-update-ui-geojsons -f fieldobs-update-ui-geojsons.Dockerfile . 
+### Pushing the image to openshift integrated repository
 
 Get the registry info.
 

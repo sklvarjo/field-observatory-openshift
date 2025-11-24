@@ -1,13 +1,3 @@
-**TODO:** -
-
-### Building the container
-
-    export DOCKER_BUILDKIT=1;docker build --secret id=git_token,src=../secret_token.txt --no-cache -f fieldobs-ecsites.Dockerfile -t fieldobs-ecsites .
-
-### Running the container locally
-
-    $ docker run --rm -u $(id -u):$(id -g) -v $(pwd)/testdata:/data fieldobs-ecsites
-
 ### Pushing to the openshift image registry
 Get the registry info.
 

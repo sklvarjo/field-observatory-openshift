@@ -1,15 +1,3 @@
-**TODO:** -
-
-### Building the container
-
-    export DOCKER_BUILDKIT=1;docker build --secret id=git_token,src=../secret_token.txt --no-cache -f fieldobs-smhi.Dockerfile -t fieldobs-smhi .
-
-**NOTE:** Sometimes you may need to add **--no-cache** to the above, for example, when changing the Git repo. 
-
-### Running the container locally
-
-    $ docker run --rm -u $(id -u):$(id -g) -v $(pwd)/testdata:/data fieldobs-smhi
-
 ### Pushing to the openshift image registry
 Get the registry info.
 
