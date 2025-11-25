@@ -28,33 +28,6 @@ To check the contents
 
     $ oc get configmaps rclone-conf -o yaml
 
-### Pushing the image to openshift integrated repository
-
-Get the registry info.
-
-    $ oc registry info --public
-    default-route-openshift-image-registry.apps.ock.fmi.fi
-
-Well this is same for everyone, so really not necessary now but here for completeness sake.
-
-
-    $ docker login -u $(oc whoami) -p $(oc whoami -t) default-route-openshift-image-registry.apps.ock.fmi.fi
-
-This may ask about a passphrase in a GUI. It is for a key that you do not remember doing. 
-You can find it by "gpg --list-secret-keys". 
-It is the local keyring's master key and the passhrase is your local machines local password.
-
-    $ docker tag hy-rclone default-route-openshift-image-registry.apps.ock.fmi.fi/field-observatory/hy-rclone
-
-**NOTE:** Check that the imageStream for this exists.
-
-    $ docker push default-route-openshift-image-registry.apps.ock.fmi.fi/field-observatory/hy-rclone
-
-**NOTE:** YOU HAVE TO CHANGE THE IMAGESTREAMS LOOKUP POLICY TO TRUE BY HAND IN CONSOLE. **Only after first push**
-Administrator side -> builds -> ImageStreams -> hatakkaj-receiver -> YAML -> "spec: lookupPolicy: local: true" -> save
-or run this in oc
-    $ oc patch is hy-rclone -p '{"spec": {"lookupPolicy": {"local": true}}}'
-
 ### Deploy on Openshift
 
 Upload the cronjob

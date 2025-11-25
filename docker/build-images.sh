@@ -1,18 +1,21 @@
 #!/usr/bin/env bash
 #
 # Building and pushing images
+# Author: Varjonen
 #
 
-# --- Colors ---
+# Setting pipefail to stop the script when docker fails etc.
+set -euo pipefail
+
+# --- Colors ------------------------------------------------------------------
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
+LPURPLE='\033[1;35m'
 NC='\033[0m' # No Color
 
-set -euo pipefail
-
-# --- Default values ---
+# --- Default values ----------------------------------------------------------
 FILES="dockerfiles"
 EXPORT="export DOCKER_BUILDKIT=1;"
 SECRET="--secret id=git_token,src="
@@ -34,110 +37,15 @@ DO_BUILD_ICOS=false
 DO_ALL=false
 DRY_RUN=false
 PUSH_IMAGES=false
+PUSH_ONLY=false
 VERBOSE=false
 
 COLS=$(tput cols)
 LINE=$(printf -- '-%.0s' $(seq $COLS); printf "\n")
 
-# --- Helper functions ---
+# --- Helper functions --------------------------------------------------------
 print_line() {
     echo -e ${BLUE}${LINE}${NC}
-}
-
-oc_error() {
-    echo -e ${RED}OC ERROR${NC}: $1
-    if $VERBOSE; then echo "$2"; fi
-    exit
-}
-
-check_oc() {
-    # Check if oc is present...
-    # Commands oc whoami and oc project field-observaory fail
-    # this is why pipefail is disabled for a while
-    set +euo pipefail
-    OC_PATH=$(which oc)
-
-    if test -z $OC_PATH; then
-        oc_error "No OC command found!" ""
-    fi
-    echo "OC command found ${OC_PATH}"
-    # Check if you are logged in
-    OUTPUT=$(oc whoami 2>&1 | cat)
-    if [[ $OUTPUT == error* ]]; then
-        oc_error "Log in" "$OUTPUT"
-        exit
-    fi
-    echo Logged in as $OUTPUT
-
-    # Check for a correct project
-    OUTPUT=$(oc project field-observatory 2>&1)
-    if [[ $OUTPUT == error* ]]; then
-        oc_error "Cannot find correct project" "$OUTPUT"
-    fi
-    echo Project is $(echo $OUTPUT | cut -d" " -f4-)
-
-    # Reset pipefail
-    set -euo pipefail
-}
-
-check_and_create_imagestream() {
-    # Check that the imagestream for image is present...
-    set +euo pipefail
-    OUTPUT=$(oc get is --no-headers -o custom-columns=POD:.metadata.name 2>&1)
-    FOUND=false
-    for word in $OUTPUT
-    do
-        if [[ $word == $1 ]]; then FOUND=true; fi
-    done
-    if  ! $FOUND; then
-        #Did not find creating...
-        read -r -d '' IS_TEMPLATE <<- EOF
----
-apiVersion: image.openshift.io/v1
-kind: ImageStream
-metadata:
-  name: $1
-  namespace: field-observatory
-EOF
-        echo "Did not find imagestream for image creating it with:"
-        echo "$IS_TEMPLATE"
-        if !$DRY_RUN; then
-            OUTPUT=$(echo "${IS_TEMPLATE}" | oc create -f- 2>&1)
-            if [[ $OUTPUT == error* ]]; then
-                oc_error "Cannot create IS" "$OUTPUT"
-            fi
-            echo $OUTPUT
-        else
-            echo DRY RUN
-        fi
-    fi
-    set -euo pipefail
-}
-
-push_image() {
-    # Pushing the image...
-    echo TOBEDONE
-
-### Pushing to the openshift image registry
-#Get the registry info.
-#
-#    $ oc registry info --public
-#    default-route-openshift-image-registry.apps.ock.fmi.fi
-#
-#Well this is same for everyone, so really not necessary now but here for completeness sake.
-#
-#    $ docker login -u $(oc whoami) -p $(oc whoami -t) default-route-openshift-image-registry.apps.ock.fmi.fi
-#
-#This may ask about a passphrase in a GUI. It is for a key that you do not remember doing. 
-#You can find it by "gpg --list-secret-keys". 
-#It is the local keyring's master key and the passhrase is your local machines local password.
-#
-#    $ docker tag fieldobs-datasense default-route-openshift-image-registry.apps.ock.fmi.fi/field-observatory/fieldobs-datasense
-#
-#Push the image to the Openshift's image registry
-#**NOTE:** Check that the imageStream for this exists.
-#
-#    $ docker push default-route-openshift-image-registry.apps.ock.fmi.fi/field-observatory/fieldobs-datasense
 }
 
 usage() {
@@ -157,6 +65,7 @@ Options:
   --icos              Build ICOS downloader image
   --build-all         Build all images
   --push              Push the images to registry
+  --push-only         Skip building and just push
   --verbose           Verbose printing when possible
   --tag <tag>         Set environment (default: latest)
   --secret <path>     Set where the secret token (PAT) file is
@@ -178,9 +87,14 @@ log() {
         INFO) color="${GREEN}" ;;
         WARN) color="${YELLOW}" ;;
         ERROR) color="${RED}" ;;
+        OC) color="${LPURPLE}" ;;
         *) color="${BLUE}" ;;
     esac
     echo -e "${color}[$(date '+%Y-%m-%d %H:%M:%S')] [$level]${NC} $*"
+    # if we have the second argument and we want more output
+    if [[ $# == 2 ]]; then
+        if $VERBOSE; then echo "$2"; fi
+    fi
 }
 
 run_cmd() {
@@ -193,7 +107,7 @@ run_cmd() {
     fi
 }
 
-# --- Parse arguments ---
+# --- Parse arguments ---------------------------------------------------------
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --datasense) DO_BUILD_DATASENSE=true ;;
@@ -208,6 +122,7 @@ while [[ $# -gt 0 ]]; do
         --icos) DO_BUILD_ICOS=true ;;
         --build-all) DO_ALL=true ;;
         --push) PUSH_IMAGES=true ;;
+        --push-only) PUSH_ONLY=true ;;
         --verbose) VERBOSE=true ;;
         --env)
             shift
@@ -232,26 +147,119 @@ while [[ $# -gt 0 ]]; do
     shift
 done
 
-if $PUSH_IMAGES; then check_oc; fi
+# --- Actions -----------------------------------------------------------------
 
-# --- Actions ---
+check_oc() {
+    # oc commands fail upon error so disabling pipefail
+    set +euo pipefail
+
+    OC_PATH=$(which oc)
+
+    if test -z $OC_PATH; then
+        log ERROR "No OC command found!"
+        exit
+    fi
+    log OC "OC command found ${OC_PATH}"
+    # Check if you are logged in
+    OUTPUT=$(oc whoami 2>&1 | cat)
+    if [[ $OUTPUT == error* ]]; then
+        log ERROR "OC: Log in to Openshift!" "$OUTPUT"
+        exit
+    fi
+    log OC "Logged in as $OUTPUT"
+
+    # Check for a correct project
+    OUTPUT=$(oc project field-observatory 2>&1)
+    if [[ $OUTPUT == error* ]]; then
+        log ERROR "OC: Cannot find correct project" "$OUTPUT"
+        exit
+    fi
+    log OC "Project is $(echo $OUTPUT | cut -d" " -f4-)"
+
+    # Reset pipefail
+    set -euo pipefail
+}
+
+check_and_create_imagestream() {
+    # oc commands fail upon error so disabling pipefail
+    set +euo pipefail
+
+    OUTPUT=$(oc get is --no-headers -o custom-columns=POD:.metadata.name 2>&1)
+    FOUND=false
+    for word in $OUTPUT
+    do
+        if [[ $word == $1 ]]; then FOUND=true; fi
+    done
+    if  ! $FOUND; then
+        #Did not find creating...
+        read -r -d '' IS_TEMPLATE <<- EOF
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: $1
+  namespace: field-observatory
+EOF
+        log OC "Did not find imagestream for image creating it with:"
+        log OC "$IS_TEMPLATE"
+        if !$DRY_RUN; then
+            OUTPUT=$(echo "${IS_TEMPLATE}" | oc create -f- 2>&1)
+            if [[ $OUTPUT == error* ]]; then
+                log ERROR "OC: Cannot create imagestream" "$OUTPUT"
+                exit
+            fi
+            log OC $OUTPUT
+        else
+            log OC "DRY RUN"
+        fi
+    else
+        log OC "Found the corresponding imagestream for ${1^^}"
+    fi
+
+    # Reset pipefail
+    set -euo pipefail
+}
+
+push_image() {
+    # This asks about a passphrase in a GUI.
+    # It is for a key that you do not remember doing.
+    # You can find it by "gpg --list-secret-keys".
+    # It is the local keyring's master key and the passhrase
+    # is your local machines local password.
+    OUTPUT=$(docker login -u $(oc whoami) -p $(oc whoami -t) ${REGISTRY} 2>&1)
+    if [[ $OUTPUT = *Succeeded ]]; then
+        log OC "Logged in to registry: ${REGISTRY}"
+    else
+        log ERROR "OC: Registry login" "$OUTPUT"
+        exit
+    fi
+    run_cmd "docker push ${REGISTRY}/${NAMESPACE}/${IMAGE}:${TAG}"
+}
+
 build() {
     local IMAGE="$1"
     SECONDS=0
     print_line
-    log INFO "Started building ${IMAGE^^} image for TAG: ${TAG}"
-    run_cmd "${EXPORT} docker build ${SECRET}${SECRET_PATH} ${CACHE}" \
-            " -f ${FILES}/${IMAGE}.Dockerfile -t ${REGISTRY}/${NAMESPACE}/${IMAGE}:${TAG} ."
-    duration=$SECONDS
-    log INFO "Done with ${IMAGE^^} image in $((duration / 60))m $((duration % 60))s."
-    if $PUSH_IMAGES; then
+    if ! $PUSH_ONLY; then
+        log INFO "Started building ${IMAGE^^} image for TAG: ${TAG}"
+        run_cmd "${EXPORT} docker build ${SECRET}${SECRET_PATH} ${CACHE}" \
+                " -f ${FILES}/${IMAGE}.Dockerfile " \
+                "-t ${REGISTRY}/${NAMESPACE}/${IMAGE}:${TAG} ."
+    fi
+    if $PUSH_IMAGES || $PUSH_ONLY; then
         log INFO "Pushing to the registry ${REGISTRY}"
         check_and_create_imagestream $IMAGE
         push_image $IMAGE
     fi
+    duration=$SECONDS
+    log INFO "Done with ${IMAGE^^} image in " \
+             "$((duration / 60))m $((duration % 60))s."
 }
 
-# --- Main execution flow ---
+# --- Main execution flow -----------------------------------------------------
+
+if $PUSH_IMAGES || $PUSH_ONLY; then check_oc; fi
+
 if $DO_ALL; then
     DO_BUILD_DATASENSE=true
     DO_BUILD_ECSITES=true
