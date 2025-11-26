@@ -6,28 +6,21 @@ Generic notes
 
 ## Cronjobs
 
-    # Datasense #############
-    $ oc apply -f fieldobs-datasense-cronjob.yml
-    # ECsites ###############
-    $ oc apply -f fieldobs-ecsites-run-gapfilling-cronjob.yml
-    $ oc apply -f fieldobs-ecsites-update-ec-data-to-ui-cronjob.yml
-    $ oc apply -f fieldobs-ecsites-update-smear-flux-to-observations-cronjob.yml
-    # Radobs ################
-    $ oc apply -f fieldobs-radobs-cronjob.yml
-    # Satobs ################
-    $ oc apply -f fieldobs-satobs-cronjob.yml
-    # SMHI ##################
-    $ oc apply -f fieldobs-smhi-cronjob.yml
-    # Update geojsons #######
+    $ oc apply -f fieldobs-datasense-cronjob.yaml
+    $ oc apply -f fieldobs-ecsites-run-gapfilling-cronjob.yaml
+    $ oc apply -f fieldobs-ecsites-update-ec-data-to-ui-cronjob.yaml
+    $ oc apply -f fieldobs-ecsites-update-smear-flux-to-observations-cronjob.yaml
+    $ oc apply -f fieldobs-radobs-cronjob.yaml
+    $ oc apply -f fieldobs-satobs-cronjob.yaml
+    $ oc apply -f fieldobs-smhi-cronjob.yaml
     $ oc apply -f fieldobs-update-ui-geojsons-cronjob.yaml
-    # FMI meteo #############
-    $ oc apply -f fmi-meteo-downloader-cronjob.yml
-    # HY rclone #############
+    $ oc apply -f fmi-meteo-downloader-cronjob.yaml
     $ oc apply -f hy-rclone-cronjob.yaml
-    # ICOS download #########
     $ oc apply -f icos-downloader-cronjob.yaml
 
 ## Hatakka template
+
+This is just a container that is waiting for the rsyncs from the Hatakkaj server.
 
     $ oc apply -f hatakkaj-receiver-deployment-configuration.yaml
 
@@ -36,53 +29,39 @@ Generic notes
     # or if changes are needed
     $ oc process hatakkaj-receiver -p STORAGESIZE=5Gi -p CPUREQUEST=100m -p CPULIMIT=1000m -p MEMORYREQUEST=128Mi -p MEMORYLIMIT=400Mi | oc create -f-
 
+    # This needs a service account to work 
+    $ oc apply -f service-account-hatakkaj-external.yaml
+
+Create the initial token for the account.
+The token is renewed from the server everyday.
+The duration is set to longer just in case of shorter network problems.
+
+    $ oc create token hatakkaj-external-pipeline --duration=49h
+
+See the GIT repository for [https://github.com/sklvarjo/hatakkaj-receiver-serverside-scipts](hatakkaj server side scripts)
+
 # Patching 
 
-## Change the schedule 
+cronjob names:
+- fieldobs-datasense-cronjob
+- fieldobs-ecsites-run-gapfilling-cronjob
+- fieldobs-ecsites-update-ec-data-to-ui-cronjob
+- fieldobs-ecsites-update-smearflux-cronjob
+- fieldobs-radobs-cronjob
+- fieldobs-satobs-cronjob
+- fieldobs-smhi-cronjob
+- fieldobs-update-ui-geojsons-cronjob
+- fmi-meteo-downloader-cronjob
+- hy-rclone-cronjob
+- icos-downloader-cronjob
 
-    # Datasense #############
-    $ oc patch cronjob fieldobs-datasense-cronjob -p '{"spec": {"schedule": "3 */1 * * *"}}'
-    # ECsites ###############
-    $ oc patch cronjob fieldobs-ecsites-run-gapfilling-cronjob -p '{"spec": {"schedule": "3 */1 * * *"}}'
-    $ oc patch cronjob fieldobs-ecsites-update-ec-data-to-ui-cronjob -p '{"spec": {"schedule": "3 */1 * * *"}}'
-    $ oc patch cronjob fieldobs-ecsites-update-smearflux-cronjob -p '{"spec": {"schedule": "3 */1 * * *"}}'
-    # Radobs ################
-    $ oc patch cronjob fieldobs-radobs-cronjob -p '{"spec": {"schedule": "3 */1 * * *"}}'
-    # Satobs ################
-    $ oc patch cronjob fieldobs-satobs-cronjob -p '{"spec": {"schedule": "3 */1 * * *"}}'
-    # SMHI ##################
-    $ oc patch cronjob fieldobs-smhi-cronjob -p '{"spec": {"schedule": "3 */1 * * *"}}'
-    # Update geojsons #######
-    $ oc patch cronjob fieldobs-update-ui-geojsons-cronjob -p '{"spec": {"schedule": "3 */1 * * *"}}'
-    # FMI meteo #############
-    $ oc patch cronjob fmi-meteo-downloader-cronjob -p '{"spec": {"schedule": "1 */1 * * *"}}'
-    # HY rclone #############
-    $ oc patch cronjob hy-rclone-cronjob -p '{"spec": {"schedule": "1 3 * * *"}}'
-    # ICOS download #########
-    $ oc patch cronjob icos-downloader-cronjob -p '{"spec": {"schedule": "3 */1 * * *"}}'
+## Change the schedule example
 
-## Suspending a cronjob
+    $ oc patch cronjob <cronjob-name> -p '{"spec": {"schedule": "3 */1 * * *"}}'
 
-    # Datasense #############
-    $ oc patch cronjob fieldobs-datasense-cronjob -p '{"spec" : {"suspend" : true }}'
-    # ECsites ###############
-    $ oc patch cronjob fieldobs-ecsites-run-gapfilling-cronjob -p '{"spec" : {"suspend" : true }}'
-    $ oc patch cronjob fieldobs-ecsites-update-ec-data-to-ui-cronjob -p '{"spec" : {"suspend" : true }}'
-    $ oc patch cronjob fieldobs-ecsites-update-smearflux-cronjob -p '{"spec" : {"suspend" : true }}'
-    # Radobs ################
-    $ oc patch cronjob fieldobs-radobs-cronjob -p '{"spec" : {"suspend" : true }}'
-    # Satobs ################
-    $ oc patch cronjob fieldobs-satobs-cronjob -p '{"spec" : {"suspend" : true }}'
-    # SMHI ##################
-    $ oc patch cronjob fieldobs-smhi-cronjob -p '{"spec" : {"suspend" : true }}'
-    # Update geojsons #######
-    $ oc patch cronjob fieldobs-update-ui-geojsons-cronjob -p '{"spec" : {"suspend" : true }}'
-    # FMI meteo #############
-    $ oc patch cronjob fmi-meteo-downloader-cronjob -p '{"spec" : {"suspend" : true }}'
-    # HY rclone #############
-    $ oc patch cronjob hy-rclone-cronjob -p '{"spec" : {"suspend" : true }}'
-    # ICOS download #########
-    $ oc patch cronjob icos-downloader-cronjob -p '{"spec" : {"suspend" : true }}'
+## Suspending a cronjob example
+
+    $ oc patch cronjob <cronjob-name> -p '{"spec" : {"suspend" : true }}'
 
 # Other 
 
@@ -90,7 +69,7 @@ Generic notes
 
 **NOTE:** Suspend the cronjob for radobs or remove it when trying to do this...
 
-    $ oc apply -f fieldobs-radobs-init-job.yml
+    $ oc apply -f fieldobs-radobs-init-job.yaml
 
 ## Usefull address to monitor radobs jobs
 
