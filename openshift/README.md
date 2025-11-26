@@ -103,21 +103,21 @@ configuration file still works similarly as nextcloud in older versions.
 Conf for old versions of rclone:
 
 ```
-    [uh_datacloud]
-    type = webdav
-    url = https://datacloud.helsinki.fi/public.php/webdav
-    vendor = nextcloud
-    user = Ce5kQ9KL9wBeY3K
+[uh_datacloud]
+type = webdav
+url = https://datacloud.helsinki.fi/public.php/webdav
+vendor = nextcloud
+user = Ce5kQ9KL9wBeY3K
 ```
 
 For new versions:
 
 ```
-    [uh_datacloud]
-    type = webdav
-    url = https://datacloud.helsinki.fi/public.php/webdav
-    vendor = owncloud
-    user = Ce5kQ9KL9wBeY3K
+[uh_datacloud]
+type = webdav
+url = https://datacloud.helsinki.fi/public.php/webdav
+vendor = owncloud
+user = Ce5kQ9KL9wBeY3K
 ```
 
 This needs to be done before deploying the cronjob. 
