@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: fieldobs-init-cams
+spec:
+  parallelism: 1
+  completions: 1
+  backoffLimit: 2
+  template:
+    metadata:
+      name: fieldobs-init-cams
+    spec:
+      volumes:
+        - name: fo-data
+          nfs:
+            path: /cephfs/fmipecan/openshift
+            server: 193.166.192.225
+            readOnly: false
+      containers:
+      - name: fieldobs-radobs-init
+        image: image-registry.openshift-image-registry.svc:5000/field-observatory/fieldobs-radobs:latest
+        resources:
+          limits:
+            memory: 512Mi
+          requests:
+            memory: 128Mi
+        command: ["/bin/bash", "-c"]
+        args: ["python -m fieldobs_radobs.radobs run_radobs /data/field-observatory/field-observatory.yml --reinit 2>&1 | tee -a /data/field-observatory/logs/fieldobs-radobs-init-job.log"]
+        volumeMounts:
+          - name: fo-data
+            mountPath: /data
+      restartPolicy: OnFailure

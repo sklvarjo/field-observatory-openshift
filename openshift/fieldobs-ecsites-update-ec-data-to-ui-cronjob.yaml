@@ -1,0 +1,35 @@
+---
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: fieldobs-ecsites-update-ec-data-to-ui-cronjob
+  namespace: field-observatory
+spec:
+  schedule: '1 */1 * * *'
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          volumes:
+            - name: fo-data
+              nfs:
+                path: /cephfs/fmipecan/openshift
+                server: 193.166.192.225
+                readOnly: false
+          containers:
+            - name: filedobs-ecsites-update-ecdata
+              image: image-registry.openshift-image-registry.svc:5000/field-observatory/fieldobs-ecsites:latest
+              resources:
+                limits:
+                  memory: 512Mi
+                requests:
+                  memory: 128Mi
+              command: ["/bin/bash", "-c"]
+              args: ["python -m fieldobs_ecsites.ecsites update_ec_data_to_ui /data/field-observatory/field-observatory.yml 2>&1 | tee -a /data/field-observatory/logs/fieldobs-ecsites-update-ec-data-to-ui-cronjob.log"]
+              volumeMounts:
+                - name: fo-data
+                  mountPath: /data
+          restartPolicy: Never

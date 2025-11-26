@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: hatakkaj-receiver
+  name: hatakkaj-receiver
+spec:
+  selector:
+    matchLabels:
+      app: hatakkaj-receiver
+  template:
+    metadata:
+      labels:
+        app: hatakkaj-receiver
+    spec:
+      volumes:
+        - name: nfs-mount
+          nfs:
+            path: /cephfs/fmipecan/openshift
+            server: 193.166.192.225
+            readOnly: false
+      containers:
+      - image: image-registry.openshift-image-registry.svc:5000/field-observatory/hatakkaj-receiver:latest
+        name: hatakkaj-receiver
+        resources:
+          limits:
+            memory: 512Mi
+          requests:
+            memory: 128Mi
+        imagePullPolicy: Always
+        command: [ "/bin/ash", "-c", "--" ]
+        args: [ "while true; do sleep 30; done;" ]
+        ports:
+          - containerPort: 8000
+            protocol: TCP
+        volumeMounts:
+          - name: nfs-mount
+            mountPath: /data
+      restartPolicy: Always
+      securityContext:
+        runAsGroup: 5107

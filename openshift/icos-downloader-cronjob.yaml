@@ -1,0 +1,35 @@
+---
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: icos-downloader-cronjob
+  namespace: field-observatory
+spec:
+  schedule: '0 1 * * *'
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          volumes:
+            - name: fo-data
+              nfs:
+                path: /cephfs/fmipecan/openshift
+                server: 193.166.192.225
+                readOnly: false
+          containers:
+            - name: icos-downloader
+              image: image-registry.openshift-image-registry.svc:5000/field-observatory/icos-downloader:latest
+              resources:
+                limits:
+                  memory: 512Mi
+                requests:
+                  memory: 128Mi
+              command: ["/bin/bash", "-c"]
+              args: ["Rscript download_and_process.R 2>&1 | tee -a /data/field-observatory/logs/icos-downloader-cronjob.log"]
+              volumeMounts:
+                - name: fo-data
+                  mountPath: /data
+          restartPolicy: Never
