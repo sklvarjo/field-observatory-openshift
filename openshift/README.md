@@ -88,6 +88,8 @@ Generic notes
 
 ## Force reinit of all Radobs
 
+**NOTE:** Suspend the cronjob for radobs or remove it when trying to do this...
+
     $ oc apply -f fieldobs-radobs-init-job.yml
 
 ## Usefull address to monitor radobs jobs
