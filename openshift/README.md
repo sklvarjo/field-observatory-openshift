@@ -123,7 +123,7 @@ user = Ce5kQ9KL9wBeY3K
 This needs to be done before deploying the cronjob. 
 This containes the information needed to configure the rclone for the UH site.
 
-    $ oc create configmap rclone-conf --from-file rclone.conf
+    $ oc apply -f hy-rclone-configmap.yaml
 
 To check the contents
 
