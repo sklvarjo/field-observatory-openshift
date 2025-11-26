@@ -1,155 +1,98 @@
-
 # Deploy to Openshift
 
-    $ oc apply -f fieldobs-datasense-cronjob.yml
-
+Generic notes
 **NOTE:** Use "oc replace -f-" instead of "oc create -f-" when making changes. Easier than removing and creating again.
 
-**NOTE:** If just changing runtime might be easier to run 
 
-    $ oc patch cronjob fieldobs-datasense-cronjob -p '{"spec": {"schedule": "3 */1 * * *"}}'
+## Cronjobs
 
-**NOTE:** suspending a cronjob
-
-    $ oc patch cronjob fieldobs-datasense-cronjob -p '{"spec" : {"suspend" : true }}'
-
-=========================
-
+    # Datasense #############
+    $ oc apply -f fieldobs-datasense-cronjob.yml
+    # ECsites ###############
     $ oc apply -f fieldobs-ecsites-run-gapfilling-cronjob.yml
     $ oc apply -f fieldobs-ecsites-update-ec-data-to-ui-cronjob.yml
     $ oc apply -f fieldobs-ecsites-update-smear-flux-to-observations-cronjob.yml
-
-**NOTE:** Use "oc replace -f-" instead of "oc create -f-" when making changes. Easier than removing and creating again.
-
-**NOTE:** update ec site allows also "--recompute-all true --site_filter viikki --data_type_filter meteo,precipitation"
-
-**NOTE:** If just changing runtime might be easier to run 
-
-    $ oc patch cronjob fieldobs-ecsites-run-gapfilling-cronjob -p '{"spec": {"schedule": "3 */1 * * *"}}'
-    $ oc patch cronjob fieldobs-ecsites-update-ec-data-to-ui-cronjob -p '{"spec": {"schedule": "3 */1 * * *"}}'
-    $ oc patch cronjob fieldobs-ecsites-update-smearflux-cronjob -p '{"spec": {"schedule": "3 */1 * * *"}}'
-
-**NOTE:** suspending a cronjob
-
-    $ oc patch cronjob fieldobs-ecsites-run-gapfilling-cronjob -p '{"spec" : {"suspend" : true }}'
-    $ oc patch cronjob fieldobs-ecsites-update-ec-data-to-ui-cronjob -p '{"spec" : {"suspend" : true }}'
-    $ oc patch cronjob fieldobs-ecsites-update-smearflux-cronjob -p '{"spec" : {"suspend" : true }}'
-
-### Parallel memo
-
-When sequential
-
-993m core, 1600mi mem
-
-===================================================================
-
+    # Radobs ################
     $ oc apply -f fieldobs-radobs-cronjob.yml
-
-**NOTE:** Use "oc replace -f-" instead of "oc create -f-" when making changes. Easier than removing and creating again.
-
-**NOTE:** If just changing runtime might be easier to run 
-
-    $ oc patch cronjob fieldobs-radobs-cronjob -p '{"spec": {"schedule": "3 */1 * * *"}}'
-
-**NOTE:** suspending a cronjob
-
-    $ oc patch cronjob fieldobs-radobs-cronjob -p '{"spec" : {"suspend" : true }}'
-
-#### Force reinit of all
-
-    $ oc apply -f fieldobs-radobs-init-job.yml
-
-#### Usefull address
-
-[Atmoshpere Data Store API](https://ads.atmosphere.copernicus.eu/api)
-
-================================================
-
+    # Satobs ################
     $ oc apply -f fieldobs-satobs-cronjob.yml
-
-**NOTE:** Use "oc replace -f-" instead of "oc create -f-" when making changes. Easier than removing and creating again.
-
-**NOTE:** If just changing runtime might be easier to run 
-
-    $ oc patch cronjob fieldobs-satobs-cronjob -p '{"spec": {"schedule": "3 */1 * * *"}}'
-
-**NOTE:** suspending a cronjob
-
-    $ oc patch cronjob fieldobs-satobs-cronjob -p '{"spec" : {"suspend" : true }}'
-
-=========================================================
-
+    # SMHI ##################
     $ oc apply -f fieldobs-smhi-cronjob.yml
-
-**NOTE:** Use "oc replace -f-" instead of "oc create -f-" when making changes. Easier than removing and creating again.
-
-**NOTE:** If just changing runtime might be easier to run 
-
-    $ oc patch cronjob fieldobs-smhi-cronjob -p '{"spec": {"schedule": "3 */1 * * *"}}'
-
-**NOTE:** suspending a cronjob
-
-    $ oc patch cronjob fieldobs-smhi-cronjob -p '{"spec" : {"suspend" : true }}'
-========================================
-
-### Deploy on Openshift
-
-Upload the cronjob
-
+    # Update geojsons #######
     $ oc apply -f fieldobs-update-ui-geojsons-cronjob.yaml
-
-**NOTE:** Use "oc replace -f-" instead of "oc create -f-" when making changes. Easier than removing and creating again.
-
-**NOTE:** If just changing runtime might be easier to run 
-
-    $ oc patch cronjob fieldobs-update-ui-geojsons-cronjob -p '{"spec": {"schedule": "3 */1 * * *"}}'
-
-**NOTE:** suspending a cronjob
-
-    $ oc patch cronjob fieldobs-update-ui-geojsons-cronjob -p '{"spec" : {"suspend" : true }}'
-
-===================================================
-
-### Deploy on Openshift
-
-Upload the cronjob
-
+    # FMI meteo #############
     $ oc apply -f fmi-meteo-downloader-cronjob.yml
+    # HY rclone #############
+    $ oc apply -f hy-rclone-cronjob.yaml
+    # ICOS download #########
+    $ oc apply -f icos-downloader-cronjob.yaml
 
-**NOTE:** Use "oc replace -f-" instead of "oc create -f-" when making changes. Easier than removing and creating again.
-
-See below the running outside of a container section for the command line switches, these can be used in the cronjob yaml's 
-args section to change the behaviour of the script. 
-
-**NOTE:** If just changing runtime might be easier to run 
-
-    $ oc patch cronjob fmi-meteo-downloader-cronjob -p '{"spec": {"schedule": "1 */1 * * *"}}'
-
-**NOTE:** suspending a cronjob
-    $ oc patch cronjob fmi-meteo-downloader-cronjob -p '{"spec" : {"suspend" : true }}'
-
-=========================================
-
-### Install everything...
-
-Upload the template
+## Hatakka template
 
     $ oc apply -f hatakkaj-receiver-deployment-configuration.yaml
 
-Instantiate the configuration from the template
-With the defaults: 
     $ oc process hatakkaj-receiver | oc create -f-
 
-With changes (that are currently allowed and in the example are the default values used in the above):
-
+    # or if changes are needed
     $ oc process hatakkaj-receiver -p STORAGESIZE=5Gi -p CPUREQUEST=100m -p CPULIMIT=1000m -p MEMORYREQUEST=128Mi -p MEMORYLIMIT=400Mi | oc create -f-
 
-**NOTE:** Once the STORAGESIZE is set once and a PVC is created from it, it cannot be changed.
+# Patching 
 
-**NOTE:** Use "oc replace -f-" instead of "oc create -f-" when making changes. Easier than removing and creating again.
+## Change the schedule 
 
-=============================================================
+    # Datasense #############
+    $ oc patch cronjob fieldobs-datasense-cronjob -p '{"spec": {"schedule": "3 */1 * * *"}}'
+    # ECsites ###############
+    $ oc patch cronjob fieldobs-ecsites-run-gapfilling-cronjob -p '{"spec": {"schedule": "3 */1 * * *"}}'
+    $ oc patch cronjob fieldobs-ecsites-update-ec-data-to-ui-cronjob -p '{"spec": {"schedule": "3 */1 * * *"}}'
+    $ oc patch cronjob fieldobs-ecsites-update-smearflux-cronjob -p '{"spec": {"schedule": "3 */1 * * *"}}'
+    # Radobs ################
+    $ oc patch cronjob fieldobs-radobs-cronjob -p '{"spec": {"schedule": "3 */1 * * *"}}'
+    # Satobs ################
+    $ oc patch cronjob fieldobs-satobs-cronjob -p '{"spec": {"schedule": "3 */1 * * *"}}'
+    # SMHI ##################
+    $ oc patch cronjob fieldobs-smhi-cronjob -p '{"spec": {"schedule": "3 */1 * * *"}}'
+    # Update geojsons #######
+    $ oc patch cronjob fieldobs-update-ui-geojsons-cronjob -p '{"spec": {"schedule": "3 */1 * * *"}}'
+    # FMI meteo #############
+    $ oc patch cronjob fmi-meteo-downloader-cronjob -p '{"spec": {"schedule": "1 */1 * * *"}}'
+    # HY rclone #############
+    $ oc patch cronjob hy-rclone-cronjob -p '{"spec": {"schedule": "1 3 * * *"}}'
+    # ICOS download #########
+    $ oc patch cronjob icos-downloader-cronjob -p '{"spec": {"schedule": "3 */1 * * *"}}'
 
+## Suspending a cronjob
+
+    # Datasense #############
+    $ oc patch cronjob fieldobs-datasense-cronjob -p '{"spec" : {"suspend" : true }}'
+    # ECsites ###############
+    $ oc patch cronjob fieldobs-ecsites-run-gapfilling-cronjob -p '{"spec" : {"suspend" : true }}'
+    $ oc patch cronjob fieldobs-ecsites-update-ec-data-to-ui-cronjob -p '{"spec" : {"suspend" : true }}'
+    $ oc patch cronjob fieldobs-ecsites-update-smearflux-cronjob -p '{"spec" : {"suspend" : true }}'
+    # Radobs ################
+    $ oc patch cronjob fieldobs-radobs-cronjob -p '{"spec" : {"suspend" : true }}'
+    # Satobs ################
+    $ oc patch cronjob fieldobs-satobs-cronjob -p '{"spec" : {"suspend" : true }}'
+    # SMHI ##################
+    $ oc patch cronjob fieldobs-smhi-cronjob -p '{"spec" : {"suspend" : true }}'
+    # Update geojsons #######
+    $ oc patch cronjob fieldobs-update-ui-geojsons-cronjob -p '{"spec" : {"suspend" : true }}'
+    # FMI meteo #############
+    $ oc patch cronjob fmi-meteo-downloader-cronjob -p '{"spec" : {"suspend" : true }}'
+    # HY rclone #############
+    $ oc patch cronjob hy-rclone-cronjob -p '{"spec" : {"suspend" : true }}'
+    # ICOS download #########
+    $ oc patch cronjob icos-downloader-cronjob -p '{"spec" : {"suspend" : true }}'
+
+# Other 
+
+## Force reinit of all Radobs
+
+    $ oc apply -f fieldobs-radobs-init-job.yml
+
+## Usefull address to monitor radobs jobs
+
+[Atmoshpere Data Store API](https://ads.atmosphere.copernicus.eu/api)
 
 ### Config map for rclone
 
@@ -179,36 +122,4 @@ This containes the information needed to configure the rclone for the UH site.
 To check the contents
 
     $ oc get configmaps rclone-conf -o yaml
-
-### Deploy on Openshift
-
-Upload the cronjob
-
-    $ oc apply -f hy-rclone-cronjob.yaml
-
-**NOTE:** Use "oc replace -f-" instead of "oc create -f-" when making changes. Easier than removing and creating again.
-
-**NOTE:** If just changing runtime might be easier to run 
-
-    $ oc patch cronjob hy-rclone-cronjob -p '{"spec": {"schedule": "1 3 * * *"}}'
-
-**NOTE:** suspending a cronjob
-    $ oc patch cronjob hy-rclone-cronjob -p '{"spec" : {"suspend" : true }}'
-
-===================================================================
-
-### Deploy on Openshift
-
-Upload the cronjob
-
-    $ oc apply -f icos-downloader-cronjob.yaml
-
-**NOTE:** Use "oc replace -f-" instead of "oc create -f-" when making changes. Easier than removing and creating again.
-
-**NOTE:** If just changing runtime might be easier to run 
-
-    $ oc patch cronjob icos-downloader-cronjob -p '{"spec": {"schedule": "3 */1 * * *"}}'
-
-**NOTE:** suspending a cronjob
-    $ oc patch cronjob icos-downloader-cronjob -p '{"spec" : {"suspend" : true }}'
 
