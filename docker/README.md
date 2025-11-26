@@ -3,6 +3,31 @@
 A simple script the simplifies the building of the images.
 
 **NOTE:** To avoid download throttling and blocking, login to docker hub/docker desktop etc.
+You will also need to have a PAT for the GIT clones for the private repositories. 
+
+## Secrets 
+
+This file should contain the PAT that you can access the fieldobs-* repositories in GIT
+
+This is gitignored and given to the builder as a secret so it is not included in the final image. 
+
+Or just go to the github 
+-> settings (main settings from your avatar right upper corner not the repository settings)
+-> developer settings (left side last item in list)
+-> personal access tokens
+-> Tokens (classic)
+-> create new token
+-> generate new token classic
+-> asks authentication
+-> Write a note for it, e.g., oc-ldndc
+-> Check full rights to repos.
+-> Generate in the end of the page.
+-> Copy the "ghp_" starting string. *NOTE:* this is the only change to copy it.
+-> Paste it to the secret-token.txt file. 
+
+Copy paste the token into file secret_token.txt (same folder as this README.md) or
+ 
+    echo "ghp_XXXXXXXXXXXXXXXXXXXX" > secret_token.txt
 
 ## Options
 
@@ -38,30 +63,6 @@ Build all or just some of the images
 
 
 ## Commands that the script runs 
-
-### Secrets 
-
-This file should contain the PAT that you can access the fieldobs-* repositories in GIT
-
-This is gitignored and given to the builder as a secret so it is not included in the final image. 
-
-Or just go to the github 
--> settings (main settings from your avatar right upper corner not the repository settings)
--> developer settings (left side last item in list)
--> personal access tokens
--> Tokens (classic)
--> create new token
--> generate new token classic
--> asks authentication
--> Write a note for it, e.g., oc-ldndc
--> Check full rights to repos.
--> Generate in the end of the page.
--> Copy the "ghp_" starting string. *NOTE:* this is the only change to copy it.
--> Paste it to the secret-token.txt file. 
-
-Copy paste the token into file secret_token.txt (same folder as this README.md) or
- 
-    echo "ghp_XXXXXXXXXXXXXXXXXXXX" > secret_token.txt
 
 ### Building
 
