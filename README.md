@@ -8,20 +8,20 @@ Scripts etc. for deploying field observatory in openshift
 
 ## Secret TOKEN for cloning the private repo
 
-All of the **fieldobs-** starting folders look for secret_token.txt from the main folder (where this README is).
+All of the `fieldobs-` starting folders look for secret_token.txt from the main folder (where this README is).
 
 This is gitignored and given to the builder as a secret so it is not included in the final image. 
 
 Get the correct token (classic) from any user with rights to read the repository. 
 
 In Github go to: 
-- > settings (personal not organization)
-- > developer options 
-- > personal access tokens 
-- > Tokens (classic)
-- > Create a new classic token with full rights to repos.
+1. settings (personal not organization)
+2. developer options 
+3. personal access tokens 
+4. Tokens (classic)
+5. Create a new classic token with full rights to repos.
 
-Copy-paste the token into file secret_token.txt (same folder as this README.md).
+Copy-paste the token into file `secret_token.txt` (same folder as this README.md).
 **NOTE:** if you do not do it now you will have to create another one.
  
 ## Dummy container
@@ -49,7 +49,7 @@ For example:
 ```
 alias ocdevlogin='oc login https://api.ock.fmi.fi:6443 -u $USER'
 ```
-This will simplify the login to simply **ocdevlogin** ... 
+This will simplify the login to simply `ocdevlogin` ... 
 as then it will ask only the password and use the current terminals username.
 
 ### Install HELM
