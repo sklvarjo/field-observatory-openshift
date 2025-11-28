@@ -90,7 +90,7 @@ log() {
         OC) color="${LPURPLE}" ;;
         *) color="${BLUE}" ;;
     esac
-    echo -e "${color}[$(date '+%Y-%m-%d %H:%M:%S')] [$level]${NC} $*"
+    echo -e "${color}[$(date '+%Y-%m-%d %H:%M:%S')] [$level]${NC} $1"
     # if we have the second argument and we want more output
     if [[ $# == 2 ]]; then
         if $VERBOSE; then echo "$2"; fi
