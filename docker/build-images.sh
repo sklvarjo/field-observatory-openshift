@@ -202,7 +202,7 @@ metadata:
 EOF
         log OC "Did not find imagestream for image creating it with:"
         log OC "$IS_TEMPLATE"
-        if !$DRY_RUN; then
+        if ! $DRY_RUN; then
             OUTPUT=$(echo "${IS_TEMPLATE}" | oc create -f- 2>&1)
             if [[ $OUTPUT == error* ]]; then
                 log ERROR "OC: Cannot create imagestream" "$OUTPUT"
