@@ -8,11 +8,11 @@ Scripts etc. for deploying field observatory in openshift
 
 ## Secret TOKEN for cloning the private repo
 
-All of the `fieldobs-` starting folders look for secret_token.txt from the main folder (where this README is).
+The building script by default is looking for `secret_token.txt` from the main folder (where this README is). 
+It contains the PAT for the private repositories that contain the actual code for the jobs.
+This file gitignored and given to the builder as a secret so it is not included in the final image. 
 
-This is gitignored and given to the builder as a secret so it is not included in the final image. 
-
-Get the correct token (classic) from any user with rights to read the repository. 
+Ask access to the repository and create a PAT or ask that a PAT is created for you.
 
 In Github go to: 
 1. settings (personal not organization)
@@ -37,6 +37,7 @@ This is also used as the rsync point for the BARData from hatakkaj.fmi.fi
 ## Quay.io
 
 Not used at the moment for FO.
+Only internal Openshift registry is in use.
 
 List of all the available containers for [org FMI](https://quay.io/organization/fmi)
 
@@ -45,10 +46,12 @@ List of all the available containers for [org FMI](https://quay.io/organization/
 ### Alias for login
 
 Add an alias to either ~/.bashrc or ~/.bash_aliases, depending on which you use.
+
 For example: 
 ```
 alias ocdevlogin='oc login https://api.ock.fmi.fi:6443 -u $USER'
 ```
+
 This will simplify the login to simply `ocdevlogin` ... 
 as then it will ask only the password and use the current terminals username.
 
