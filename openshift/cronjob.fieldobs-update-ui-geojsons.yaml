@@ -3,10 +3,11 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: icos-downloader-cronjob
+  name: fieldobs-update-ui-geojsons-cronjob
   namespace: field-observatory
 spec:
-  schedule: '0 1 * * *'
+  timeZone: "Europe/Helsinki"
+  schedule: '5 */1 * * *'
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1
   jobTemplate:
@@ -20,15 +21,15 @@ spec:
                 server: 193.166.192.225
                 readOnly: false
           containers:
-            - name: icos-downloader
-              image: image-registry.openshift-image-registry.svc:5000/field-observatory/icos-downloader:latest
+            - name: fieldobs-update-ui-geojsons
+              image: image-registry.openshift-image-registry.svc:5000/field-observatory/fieldobs-update-ui-geojsons:latest
               resources:
                 limits:
                   memory: 512Mi
                 requests:
                   memory: 128Mi
               command: ["/bin/bash", "-c"]
-              args: ["Rscript download_and_process.R 2>&1 | tee -a /data/field-observatory/logs/icos-downloader-cronjob.log"]
+              args: ["python3 -u -m fieldobs_utils.bucket update_metadata /data/field-observatory/field-observatory.yml --update_ui_geojsons 2>&1 | tee -a /data/field-observatory/logs/fieldobs-update-ui-geojsons-cronjob.log"]
               volumeMounts:
                 - name: fo-data
                   mountPath: /data

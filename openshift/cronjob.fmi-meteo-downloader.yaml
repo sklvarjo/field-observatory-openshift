@@ -3,10 +3,11 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: fieldobs-ecsites-update-smearflux-cronjob
+  name: fmi-meteo-downloader-cronjob
   namespace: field-observatory
 spec:
-  schedule: '10 7 * * *'
+  timeZone: "Europe/Helsinki"
+  schedule: '1 */1 * * *'
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1
   jobTemplate:
@@ -20,15 +21,15 @@ spec:
                 server: 193.166.192.225
                 readOnly: false
           containers:
-            - name: filedobs-ecsites-update-smearflux
-              image: image-registry.openshift-image-registry.svc:5000/field-observatory/fieldobs-ecsites:latest
+            - name: fmi-meteo-downloader
+              image: image-registry.openshift-image-registry.svc:5000/field-observatory/fmi-meteo-downloader:latest
               resources:
                 limits:
                   memory: 512Mi
                 requests:
                   memory: 128Mi
               command: ["/bin/bash", "-c"]
-              args: ["python -m fieldobs_ecsites.ecsites update_smear_flux_to_observations /data/field-observatory/field-observatory.yml --site_id viikki 2>&1 | tee -a /data/field-observatory/logs/fieldobs-ecsites-update-smear-flux-to-observations-cronjob.log"]
+              args: ["python3 -u /project/src/main.py -s 1 2>&1 | tee -a /data/field-observatory/logs/fmi-meteo-downloader-cronjob.log"]
               volumeMounts:
                 - name: fo-data
                   mountPath: /data

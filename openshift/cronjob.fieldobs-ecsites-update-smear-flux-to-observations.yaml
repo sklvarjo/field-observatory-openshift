@@ -3,10 +3,11 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: fieldobs-ecsites-run-gapfilling-cronjob
+  name: fieldobs-ecsites-update-smearflux-cronjob
   namespace: field-observatory
 spec:
-  schedule: '30 7 * * *'
+  timeZone: "Europe/Helsinki"
+  schedule: '10 7 * * *'
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1
   jobTemplate:
@@ -22,15 +23,13 @@ spec:
           containers:
             - name: filedobs-ecsites-update-smearflux
               image: image-registry.openshift-image-registry.svc:5000/field-observatory/fieldobs-ecsites:latest
-              command: ["/bin/bash", "-c"]
-              args: ["python -m fieldobs_ecsites.ecsites run_gapfilling /data/field-observatory/field-observatory.yml 2>&1 | tee -a /data/field-observatory/logs/fieldobs-ecsites-run-gapfilling-cronjob.log"]
               resources:
                 limits:
-                  cpu: 1000m
-                  memory: 2000Mi
+                  memory: 512Mi
                 requests:
-                  cpu: 100m
                   memory: 128Mi
+              command: ["/bin/bash", "-c"]
+              args: ["python -m fieldobs_ecsites.ecsites update_smear_flux_to_observations /data/field-observatory/field-observatory.yml --site_id viikki 2>&1 | tee -a /data/field-observatory/logs/fieldobs-ecsites-update-smear-flux-to-observations-cronjob.log"]
               volumeMounts:
                 - name: fo-data
                   mountPath: /data

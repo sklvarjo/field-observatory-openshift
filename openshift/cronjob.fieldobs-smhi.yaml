@@ -3,10 +3,11 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: fieldobs-radobs-cronjob
+  name: fieldobs-smhi-cronjob
   namespace: field-observatory
 spec:
-  schedule: '15 10 * * *'
+  timeZone: "Europe/Helsinki"
+  schedule: '1 */1 * * *'
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1
   jobTemplate:
@@ -20,15 +21,15 @@ spec:
                 server: 193.166.192.225
                 readOnly: false
           containers:
-            - name: filedobs-radobs
-              image: image-registry.openshift-image-registry.svc:5000/field-observatory/fieldobs-radobs:latest
+            - name: filedobs-smhi
+              image: image-registry.openshift-image-registry.svc:5000/field-observatory/fieldobs-smhi:latest
               resources:
                 limits:
                   memory: 512Mi
                 requests:
                   memory: 128Mi
               command: ["/bin/bash", "-c"]
-              args: ["python -m fieldobs_radobs /data/field-observatory/field-observatory.yml 2>&1 | tee -a /data/field-observatory/logs/fieldobs-radobs-cronjob.log"]
+              args: ["python -m fieldobs_smhi.smhi update /data/field-observatory/field-observatory.yml 2>&1 | tee -a /data/field-observatory/logs/fieldobs-smhi-cronjob.log"]
               volumeMounts:
                 - name: fo-data
                   mountPath: /data

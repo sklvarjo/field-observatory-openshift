@@ -6,6 +6,7 @@ metadata:
   name: fieldobs-datasense-cronjob
   namespace: field-observatory
 spec:
+  timeZone: "Europe/Helsinki"
   schedule: '1 */1 * * *'
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1

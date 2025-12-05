@@ -6,18 +6,18 @@ Generic notes
 
 ## Cronjobs
 
-    $ oc apply -f fieldobs-datasense-cronjob.yaml
-    $ oc apply -f fieldobs-ecsites-run-gapfilling-cronjob.yaml
-    $ oc apply -f fieldobs-ecsites-update-ec-data-to-ui-cronjob.yaml
-    $ oc apply -f fieldobs-ecsites-update-smear-flux-to-observations-cronjob.yaml
-    $ oc apply -f fieldobs-radobs-cronjob.yaml
-    $ oc apply -f fieldobs-satobs-cronjob.yaml
-    $ oc apply -f fieldobs-smhi-cronjob.yaml
-    $ oc apply -f fieldobs-update-ui-geojsons-cronjob.yaml
-    $ oc apply -f fmi-meteo-downloader-cronjob.yaml
-    $ oc apply -f hy-rclone-cronjob.yaml
-    $ oc apply -f icos-downloader-cronjob.yaml
-
+    $ oc apply -f cronjob.fieldobs-datasense.yaml
+    $ oc apply -f cronjob.fieldobs-ecsites-run-gapfilling.yaml
+    $ oc apply -f cronjob.fieldobs-ecsites-update-ec-data-to-ui.yaml
+    $ oc apply -f cronjob.fieldobs-ecsites-update-smear-flux-to-observations.yaml
+    $ oc apply -f cronjob.fieldobs-radobs.yaml
+    $ oc apply -f cronjob.fieldobs-satobs.yaml
+    $ oc apply -f cronjob.fieldobs-smhi.yaml
+    $ oc apply -f cronjob.fieldobs-update-ui-geojsons.yaml
+    $ oc apply -f cronjob.fmi-meteo-downloader.yaml
+    $ oc apply -f cronjob.hy-rclone.yaml
+    $ oc apply -f cronjob.icos-downloader.yaml
+ 
 ## Hatakka template
 
 This is just a container that is waiting for the rsyncs from the Hatakkaj server.
@@ -30,7 +30,7 @@ This is just a container that is waiting for the rsyncs from the Hatakkaj server
     $ oc process hatakkaj-receiver -p STORAGESIZE=5Gi -p CPUREQUEST=100m -p CPULIMIT=1000m -p MEMORYREQUEST=128Mi -p MEMORYLIMIT=400Mi | oc create -f-
 
     # This needs a service account to work 
-    $ oc apply -f service-account-hatakkaj-external.yaml
+    $ oc apply -f serviceaccount.hatakkaj-external.yaml
 
 Create the initial token for the account.
 The token is renewed from the server everyday.

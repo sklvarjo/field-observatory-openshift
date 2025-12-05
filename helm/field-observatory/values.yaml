@@ -132,6 +132,7 @@ cronjobs:
   #  failedJobsHistoryLimit       : int (optional / default 1) - How many failed job pods are saved
   #  successfulJobsHistoryLimit   : int (optional / default 1) - How many successful job pods are saved
   #  restartPolicy                : string (optional / default Never) - Restart policy
+  #  timezone                     : string (optional / default "Europe/Helsinki") - Timezone to be used
   #  schedule                     : string (optional / default "0 1 * * *" - When is this cronjob run
   #  concurrencyPolicy            : string (optional / default Forbid) - Is another job started if the last one is running
   #
