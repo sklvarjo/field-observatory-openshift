@@ -10,7 +10,7 @@ WORKDIR /fieldobs
 # Use BuildKit secret to access GIT_TOKEN
 RUN --mount=type=secret,id=git_token \
     GIT_TOKEN=$(cat /run/secrets/git_token) && \
-    git clone -b develop-package https://oauth2:${GIT_TOKEN}@github.com/ollinevalainen/ec_gapfilling.git /fieldobs/ec_gapfilling/
+    git clone -b openshift https://oauth2:${GIT_TOKEN}@github.com/ollinevalainen/ec_gapfilling.git /fieldobs/ec_gapfilling/
 
 RUN --mount=type=secret,id=git_token \
     GIT_TOKEN=$(cat /run/secrets/git_token) && \
