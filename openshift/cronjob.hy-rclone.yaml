@@ -6,6 +6,7 @@ metadata:
   name: hy-rclone-cronjob
   namespace: field-observatory
 spec:
+  timeZone: "Europe/Helsinki"
   schedule: '15 6 * * *'
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1
