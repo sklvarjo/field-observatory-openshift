@@ -149,6 +149,13 @@ done
 
 # --- Actions -----------------------------------------------------------------
 
+check_secret_file() {
+    if [[ ! -f $SECRET_PATH ]]; then
+        log ERROR "Did not find secret file: $SECRET_PATH:"
+        exit 1
+    fi
+}
+
 check_oc() {
     # oc commands fail upon error so disabling pipefail
     set +euo pipefail
@@ -257,6 +264,8 @@ build() {
 }
 
 # --- Main execution flow -----------------------------------------------------
+
+check_secret_file
 
 if $PUSH_IMAGES || $PUSH_ONLY; then check_oc; fi
 
