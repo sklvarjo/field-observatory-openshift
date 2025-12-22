@@ -23,11 +23,8 @@ Or just go to the github
 -> Check full rights to repos.
 -> Generate in the end of the page.
 -> Copy the "ghp_" starting string. *NOTE:* this is the only change to copy it.
--> Paste it to the secret-token.txt file. 
-
-Copy paste the token into file secret_token.txt (same folder as this README.md) or
- 
-    echo "ghp_XXXXXXXXXXXXXXXXXXXX" > secret_token.txt
+-> Paste it to the GITHUB_PAT env variable "export GITHUB_PAT=" etc.
+   You can put it for example in ~/.bashrc file in a line by itself "export GITHUB_PAT=ghp_4474774..."
 
 ## Options
 

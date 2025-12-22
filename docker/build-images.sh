@@ -18,11 +18,11 @@ NC='\033[0m' # No Color
 # --- Default values ----------------------------------------------------------
 FILES="dockerfiles"
 EXPORT="export DOCKER_BUILDKIT=1;"
-SECRET="--secret id=git_token,src="
+SECRET="--secret id=git_token,env="
 CACHE="--no-cache"
 REGISTRY="default-route-openshift-image-registry.apps.ock.fmi.fi"
 NAMESPACE="field-observatory"
-SECRET_PATH="../secret_token.txt"
+SECRET_PATH="GITHUB_PAT"
 TAG="latest"
 DO_BUILD_DATASENSE=false
 DO_BUILD_ECSITES=false
@@ -68,7 +68,7 @@ Options:
   --push-only         Skip building and just push
   --verbose           Verbose printing when possible
   --tag <tag>         Set environment (default: latest)
-  --secret <path>     Set where the secret token (PAT) file is
+  --secret <env>      Set the env variable to use for the PAT (default: GITHUB_PAT)
   --dry-run           Print actions without executing them
   -h, --help          Show this help and exit
 
@@ -133,6 +133,7 @@ while [[ $# -gt 0 ]]; do
            SECRET_PATH="${1:-secret}"
            echo Reading GIT PAT from $SECRET_PATH
            ;;
+
         --dry-run) DRY_RUN=true ;;
         -h|--help)
             usage
@@ -149,9 +150,9 @@ done
 
 # --- Actions -----------------------------------------------------------------
 
-check_secret_file() {
-    if [[ ! -f $SECRET_PATH ]]; then
-        log ERROR "Did not find secret file: $SECRET_PATH:"
+check_secret_env() {
+    if [[ $GITHUB_PAT != "ghp_"* ]]; then
+        log ERROR "GITHUB_PAT did not look correct ($GITHUB_PAT)"
         exit 1
     fi
 }
@@ -265,7 +266,7 @@ build() {
 
 # --- Main execution flow -----------------------------------------------------
 
-check_secret_file
+check_secret_env
 
 if $PUSH_IMAGES || $PUSH_ONLY; then check_oc; fi
 
